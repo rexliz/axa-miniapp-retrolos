@@ -23,6 +23,15 @@ jobs:
     steps:
       - uses: actions/checkout@v7
 
+      # Tests ohne package.json und ohne Abhängigkeiten (node:test ist eingebaut).
+      # Schlägt ein Test fehl, wird nicht deployt.
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+
+      - name: Tests ausführen
+        run: node --test tests/
+
       - name: Warn if there is no entry point
         run: |
           if [ ! -f index.html ]; then
