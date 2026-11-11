@@ -322,7 +322,8 @@ p {
 }
 
 input[type="text"],
-input[type="date"] {
+input[type="date"],
+select {
   min-height: 2.75rem;
   padding: var(--space-2) var(--space-3);
   border: 1px solid var(--color-border);
@@ -331,6 +332,19 @@ input[type="date"] {
   background: var(--color-surface);
   color: var(--color-text);
   font: inherit;
+}
+
+.format-fit {
+  color: var(--color-text-muted);
+}
+
+.format-fit strong {
+  color: var(--color-primary);
+}
+
+.zone-emoji {
+  font-size: 1.6rem;
+  line-height: 1;
 }
 
 #trip-title {
@@ -584,16 +598,6 @@ input[type="date"] {
   font-size: var(--font-size-xl);
 }
 
-.zone-icon {
-  width: 2rem;
-  height: 2rem;
-  fill: none;
-  stroke: var(--color-primary);
-  stroke-width: 2;
-  stroke-linecap: round;
-  stroke-linejoin: round;
-}
-
 .zone-count {
   min-width: 2rem;
   padding: 0 var(--space-2);
@@ -805,6 +809,10 @@ input[type="date"] {
 @media (min-width: 44rem) {
   .zones {
     grid-template-columns: repeat(2, 1fr);
+  }
+
+  .zones[data-count="1"] {
+    grid-template-columns: 1fr;
   }
 
   .action-form {

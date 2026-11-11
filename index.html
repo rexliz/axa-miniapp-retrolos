@@ -4,11 +4,11 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'self'; form-action 'self'; object-src 'none'">
-  <meta name="description" content="RetroLos! – deine Retro als Segeltörn: Wind, Anker, Felsen, Insel und bis zu drei nächste Schritte.">
-  <title>RetroLos! – Segeltörn-Retro</title>
+  <meta name="description" content="RetroLos! – deine Mini-Retro: Format wählen, Notizen sammeln, bis zu drei nächste Schritte festlegen.">
+  <title>RetroLos! – Mini-Retro</title>
   <link rel="icon" href="favicon.svg" type="image/svg+xml">
   <link rel="stylesheet" href="styles.css">
-  <script src="core-segelboot.js" defer></script>
+  <script src="core-retro.js" defer></script>
   <script src="core-privacy.js" defer></script>
   <script src="ui.js" defer></script>
   <script src="effects.js" defer></script>
@@ -20,7 +20,7 @@
   <header class="site-header">
     <div class="container header-inner">
       <a class="brand" href="index.html">RetroLos<span class="brand-accent">!</span></a>
-      <span class="brand-tag">Segeltörn-Retro</span>
+      <span class="brand-tag">Mini-Retro</span>
     </div>
   </header>
 
@@ -30,10 +30,14 @@
 
   <main id="inhalt">
     <section class="hero container">
-      <h1>Wie segelt dein Team?</h1>
+      <h1>Wie lief euer Sprint?</h1>
       <div class="trip">
         <div class="trip-field">
-          <label for="trip-title">Törn</label>
+          <label for="format">Format</label>
+          <select id="format"></select>
+        </div>
+        <div class="trip-field">
+          <label for="trip-title">Sprint</label>
           <input id="trip-title" type="text" maxlength="60" placeholder="z. B. Sprint 12" autocomplete="off">
         </div>
         <div class="trip-field">
@@ -41,10 +45,11 @@
           <input id="trip-date" type="date">
         </div>
       </div>
+      <p class="format-fit" id="format-fit"></p>
       <noscript><p class="notice">RetroLos! braucht JavaScript, um Karten zu speichern.</p></noscript>
     </section>
 
-    <section class="sea" aria-label="Segelboot">
+    <section class="sea" id="sea" aria-label="Segelboot" hidden>
       <div class="container">
         <div class="scene-host" id="scene"></div>
         <p class="course" id="course" aria-live="polite">
@@ -54,72 +59,12 @@
       </div>
     </section>
 
-    <section class="zones container" aria-label="Deine Karten">
-      <section class="zone" data-zone="wind" aria-labelledby="titel-wind">
-        <div class="zone-head">
-          <svg class="zone-icon" viewBox="0 0 32 32" aria-hidden="true" focusable="false"><path d="M4 11h15a4 4 0 1 0-4-4M4 17h21a4 4 0 1 1-4 4M4 23h10"/></svg>
-          <h2 id="titel-wind">Wind</h2>
-          <span class="zone-count" id="count-wind">0</span>
-        </div>
-        <p class="zone-question">Was treibt uns an?</p>
-        <ul class="zone-cards" id="cards-wind"></ul>
-        <form class="zone-add" data-zone="wind">
-          <label class="visually-hidden" for="neu-wind">Neue Karte für Wind</label>
-          <input id="neu-wind" type="text" maxlength="300" placeholder="Notiz hinzufügen" autocomplete="off">
-          <button type="submit" class="button button-icon" aria-label="Karte zu Wind hinzufügen">+</button>
-        </form>
-      </section>
-
-      <section class="zone" data-zone="anker" aria-labelledby="titel-anker">
-        <div class="zone-head">
-          <svg class="zone-icon" viewBox="0 0 32 32" aria-hidden="true" focusable="false"><circle cx="16" cy="6" r="3"/><path d="M16 9v19M10 14h12M5 19c1 6 6 9 11 9s10-3 11-9"/></svg>
-          <h2 id="titel-anker">Anker</h2>
-          <span class="zone-count" id="count-anker">0</span>
-        </div>
-        <p class="zone-question">Was bremst uns?</p>
-        <ul class="zone-cards" id="cards-anker"></ul>
-        <form class="zone-add" data-zone="anker">
-          <label class="visually-hidden" for="neu-anker">Neue Karte für Anker</label>
-          <input id="neu-anker" type="text" maxlength="300" placeholder="Notiz hinzufügen" autocomplete="off">
-          <button type="submit" class="button button-icon" aria-label="Karte zu Anker hinzufügen">+</button>
-        </form>
-      </section>
-
-      <section class="zone" data-zone="felsen" aria-labelledby="titel-felsen">
-        <div class="zone-head">
-          <svg class="zone-icon" viewBox="0 0 32 32" aria-hidden="true" focusable="false"><path d="M3 26l8-14 5 6 4-8 9 16z"/></svg>
-          <h2 id="titel-felsen">Felsen</h2>
-          <span class="zone-count" id="count-felsen">0</span>
-        </div>
-        <p class="zone-question">Welche Risiken sehen wir?</p>
-        <ul class="zone-cards" id="cards-felsen"></ul>
-        <form class="zone-add" data-zone="felsen">
-          <label class="visually-hidden" for="neu-felsen">Neue Karte für Felsen</label>
-          <input id="neu-felsen" type="text" maxlength="300" placeholder="Notiz hinzufügen" autocomplete="off">
-          <button type="submit" class="button button-icon" aria-label="Karte zu Felsen hinzufügen">+</button>
-        </form>
-      </section>
-
-      <section class="zone" data-zone="insel" aria-labelledby="titel-insel">
-        <div class="zone-head">
-          <svg class="zone-icon" viewBox="0 0 32 32" aria-hidden="true" focusable="false"><path d="M3 27c4-3 22-3 26 0M16 26c-1-6 0-12 3-16M19 10c-4-3-9-2-11 1M19 10c4-3 8-2 10 1M19 10c0-4 2-6 5-7"/></svg>
-          <h2 id="titel-insel">Insel</h2>
-          <span class="zone-count" id="count-insel">0</span>
-        </div>
-        <p class="zone-question">Wo wollen wir hin?</p>
-        <ul class="zone-cards" id="cards-insel"></ul>
-        <form class="zone-add" data-zone="insel">
-          <label class="visually-hidden" for="neu-insel">Neue Karte für Insel</label>
-          <input id="neu-insel" type="text" maxlength="300" placeholder="Notiz hinzufügen" autocomplete="off">
-          <button type="submit" class="button button-icon" aria-label="Karte zu Insel hinzufügen">+</button>
-        </form>
-      </section>
-    </section>
+    <section class="zones container" id="zones" aria-label="Deine Notizen"></section>
 
     <section class="kurs" aria-labelledby="kurs-titel">
       <div class="container">
-        <h2 id="kurs-titel">Kurs setzen</h2>
-        <p class="zone-question">Höchstens drei nächste Schritte.</p>
+        <h2 id="kurs-titel">Nächste Schritte</h2>
+        <p class="zone-question">Höchstens drei – lieber wenige, dafür konkret.</p>
         <ol class="actions" id="actions"></ol>
         <form class="action-form" id="action-form">
           <div class="action-field action-what">

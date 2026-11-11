@@ -1,81 +1,119 @@
 /* ==========================================================================
-   RetroLos! – Oberfläche des Segeltörns (eine Person, ein Gerät)
-   Speichert automatisch im Browser; die Logik steckt in core-segelboot.js.
+   RetroLos! – Oberfläche der Mini-Retro (eine Person, ein Gerät)
+   Format wählen, Notizen sammeln, nächste Schritte festlegen. Speichert
+   automatisch im Browser; die Logik steckt in core-retro.js.
    ========================================================================== */
 (function () {
   'use strict';
 
   const app = window.RetroLos || {};
-  const { segelboot: S, ui, effects } = app;
-  if (!S || !ui) return;
+  const { retro: R, ui, effects } = app;
+  if (!R || !ui) return;
 
   const $ = (id) => document.getElementById(id);
-  let log = S.normalize(ui.storage.get('logbuch', null));
-  const scene = effects ? effects.createSailboat($('scene')) : null;
+  let log = R.normalize(ui.storage.get('logbuch', null));
+  let scene = null;
 
   function save() {
     ui.storage.set('logbuch', log);
   }
 
-  function renderZone(zone) {
-    const list = $('cards-' + zone.key);
-    list.replaceChildren(...log.cards[zone.key].map((text, i) => ui.el('li', { class: 'card' },
+  /* ---------- Zonen ---------- */
+
+  function renderCards(zone) {
+    const cards = R.zoneCards(log, zone.key);
+    $('cards-' + zone.key).replaceChildren(...cards.map((text, i) => ui.el('li', { class: 'card' },
       ui.el('span', { class: 'card-text', text }),
       ui.el('button', {
         type: 'button',
         class: 'card-remove',
-        'aria-label': 'Karte löschen: ' + text.slice(0, 40),
+        'aria-label': 'Notiz löschen: ' + text.slice(0, 40),
         onclick: () => {
-          S.removeCard(log, zone.key, i);
-          commit();
+          R.removeCard(log, zone.key, i);
+          save();
+          renderCards(zone);
+          renderCourse();
           $('neu-' + zone.key).focus();
         },
       }, '×'))));
-    $('count-' + zone.key).textContent = String(log.cards[zone.key].length);
+    $('count-' + zone.key).textContent = String(cards.length);
   }
 
-  function renderActions() {
-    $('actions').replaceChildren(...log.actions.map((a, i) => ui.el('li', { class: 'action' },
-      ui.el('span', { class: 'card-text', text: a.what }),
-      a.due ? ui.el('span', { class: 'action-due', text: 'bis ' + S.formatDate(a.due) }) : null,
-      ui.el('button', {
-        type: 'button',
-        class: 'card-remove',
-        'aria-label': 'Schritt löschen: ' + a.what.slice(0, 40),
-        onclick: () => {
-          S.removeAction(log, i);
-          commit();
-        },
-      }, '×'))));
-    $('action-form').hidden = log.actions.length >= S.MAX_ACTIONS;
+  function buildZones() {
+    const f = R.format(log);
+    const box = $('zones');
+    box.dataset.count = String(f.zones.length);
+    box.replaceChildren(...f.zones.map((zone) => {
+      const input = ui.el('input', { id: 'neu-' + zone.key, type: 'text', maxlength: '300', placeholder: 'Notiz hinzufügen', autocomplete: 'off' });
+      const form = ui.el('form', { class: 'zone-add' },
+        ui.el('label', { class: 'visually-hidden', for: 'neu-' + zone.key, text: 'Neue Notiz für ' + zone.name }),
+        input,
+        ui.el('button', { type: 'submit', class: 'button button-icon', 'aria-label': 'Notiz zu ' + zone.name + ' hinzufügen' }, '+'));
+      const section = ui.el('section', { class: 'zone', 'aria-labelledby': 'titel-' + zone.key },
+        ui.el('div', { class: 'zone-head' },
+          ui.el('span', { class: 'zone-emoji', 'aria-hidden': 'true', text: zone.emoji }),
+          ui.el('h2', { id: 'titel-' + zone.key, text: zone.name }),
+          ui.el('span', { class: 'zone-count', id: 'count-' + zone.key, text: '0' })),
+        ui.el('p', { class: 'zone-question', text: zone.question }),
+        ui.el('ul', { class: 'zone-cards', id: 'cards-' + zone.key }),
+        form);
+      const guard = ui.attachPrivacyHint(input);
+      form.addEventListener('submit', (event) => {
+        event.preventDefault();
+        if (!R.addCard(log, zone.key, input.value)) {
+          input.focus();
+          return;
+        }
+        input.value = '';
+        guard.run();
+        save();
+        renderCards(zone);
+        renderCourse();
+        input.focus();
+      });
+      return section;
+    }));
+    f.zones.forEach(renderCards);
   }
 
-  function renderCourse() {
-    const c = S.course(log);
-    $('course-label').textContent = c.label;
-    $('course-knots').textContent = c.knots + ' Knoten';
-    if (scene) scene.update(c);
-  }
+  /* ---------- Format und Segelboot ---------- */
 
-  function render() {
-    S.ZONES.forEach(renderZone);
-    renderActions();
+  function renderFormat() {
+    const f = R.format(log);
+    $('format').value = f.key;
+    $('format-fit').replaceChildren(ui.el('strong', { text: f.emoji + ' ' + f.name }), ' – gut geeignet für ' + f.fitsFor + '.');
+    const boat = f.scene === 'segelboot' && effects;
+    $('sea').hidden = !boat;
+    if (boat && !scene) scene = effects.createSailboat($('scene'));
+    buildZones();
     renderCourse();
   }
 
-  function commit() {
-    save();
-    render();
+  function renderCourse() {
+    if (!scene || $('sea').hidden) return;
+    const c = R.course(log);
+    $('course-label').textContent = c.label;
+    $('course-knots').textContent = c.knots + ' Knoten';
+    scene.update(c);
   }
 
-  /* ---------- Eingaben ---------- */
+  const select = $('format');
+  R.FORMATS.forEach((f) => select.append(ui.el('option', { value: f.key, text: f.emoji + ' ' + f.name })));
+  select.addEventListener('change', () => {
+    if (R.setFormat(log, select.value)) {
+      save();
+      renderFormat();
+    }
+  });
+
+  /* ---------- Törn ---------- */
 
   const title = $('trip-title');
   const date = $('trip-date');
   title.value = log.title;
   date.value = log.date;
   title.addEventListener('input', () => {
-    log.title = S.cleanText(title.value).slice(0, 60);
+    log.title = R.cleanText(title.value).slice(0, 60);
     save();
   });
   date.addEventListener('input', () => {
@@ -85,37 +123,40 @@
     }
   });
 
-  document.querySelectorAll('.zone-add').forEach((form) => {
-    const zone = form.dataset.zone;
-    const input = form.querySelector('input');
-    const guard = ui.attachPrivacyHint(input);
-    form.addEventListener('submit', (event) => {
-      event.preventDefault();
-      if (!S.addCard(log, zone, input.value)) {
-        input.focus();
-        return;
-      }
-      input.value = '';
-      guard.run();
-      commit();
-      input.focus();
-    });
-  });
+  /* ---------- Nächste Schritte ---------- */
+
+  function renderActions() {
+    $('actions').replaceChildren(...log.actions.map((a, i) => ui.el('li', { class: 'action' },
+      ui.el('span', { class: 'card-text', text: a.what }),
+      a.due ? ui.el('span', { class: 'action-due', text: 'bis ' + R.formatDate(a.due) }) : null,
+      ui.el('button', {
+        type: 'button',
+        class: 'card-remove',
+        'aria-label': 'Schritt löschen: ' + a.what.slice(0, 40),
+        onclick: () => {
+          R.removeAction(log, i);
+          save();
+          renderActions();
+        },
+      }, '×'))));
+    $('action-form').hidden = log.actions.length >= R.MAX_ACTIONS;
+  }
 
   const actionWhat = $('action-what');
   const actionGuard = ui.attachPrivacyHint(actionWhat);
   $('action-form').addEventListener('submit', (event) => {
     event.preventDefault();
-    if (!S.addAction(log, actionWhat.value, $('action-due').value)) {
+    if (!R.addAction(log, actionWhat.value, $('action-due').value)) {
       actionWhat.focus();
       return;
     }
     actionWhat.value = '';
     $('action-due').value = '';
     actionGuard.run();
-    commit();
-    if (log.actions.length >= S.MAX_ACTIONS) {
-      ui.announce('Kurs gesetzt – drei Schritte reichen für den nächsten Sprint.', 'success');
+    save();
+    renderActions();
+    if (log.actions.length >= R.MAX_ACTIONS) {
+      ui.announce('Drei Schritte – das reicht für den nächsten Sprint.', 'success');
       if (effects) effects.confetti();
     } else {
       actionWhat.focus();
@@ -125,24 +166,29 @@
   /* ---------- Logbuch ---------- */
 
   $('save').addEventListener('click', () => {
-    ui.download(S.fileName(log), S.toMarkdown(log));
-    ui.announce('Logbuch gespeichert: ' + S.fileName(log), 'success');
+    ui.download(R.fileName(log), R.toMarkdown(log));
+    ui.announce('Gespeichert: ' + R.fileName(log), 'success');
   });
 
   $('copy').addEventListener('click', async () => {
-    const ok = await ui.copyText(S.summaryText(log));
+    const ok = await ui.copyText(R.summaryText(log));
     ui.announce(ok ? 'Text kopiert.' : 'Kopieren hat nicht geklappt.', ok ? 'success' : 'warning');
   });
 
   $('reset').addEventListener('click', () => {
-    if (!window.confirm('Alles löschen und einen neuen Törn beginnen? Speichere vorher das Logbuch, wenn du es behalten willst.')) return;
+    if (!window.confirm('Alles löschen und neu beginnen? Speichere vorher das Logbuch, wenn du es behalten willst.')) return;
     ui.storage.clearAll();
-    log = S.createLog();
+    const keep = log.format;
+    log = R.createLog();
+    R.setFormat(log, keep);
     title.value = '';
     date.value = log.date;
-    commit();
-    ui.announce('Neuer Törn – Leinen los!');
+    save();
+    renderFormat();
+    renderActions();
+    ui.announce('Neu beginnen – los gehts!');
   });
 
-  render();
+  renderFormat();
+  renderActions();
 })();

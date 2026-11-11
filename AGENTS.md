@@ -10,9 +10,9 @@ the website: what is in git is byte-for-byte what the browser receives, with
 nothing between source and output.
 
 **Dieses Repository ist die Mini-App «RetroLos!»** (AXA-Hackathon, Plattform
-«AXALos!», Lösung 1 «Solo Workout»): eine schmale Einzelnutzer-Retro im Format
-Segelboot (Wind, Anker, Felsen, Insel, bis zu drei nächste Schritte) mit Export
-als Markdown.
+«AXALos!», Lösung 1 «Solo Workout»): eine schmale Einzelnutzer-Retro: Format wählen
+(13 Formate, Standard Segelboot), Notizen sammeln, bis zu drei nächste Schritte,
+Export als Markdown.
 
 - **Zielgruppe:** Mitarbeitende, die allein eine Retro machen.
 - **Nicht-Ziele:** mehrere Personen, Sessions, Teilen/Links, Agenda, Server,
@@ -175,8 +175,9 @@ Begründungen: [docs/entscheidungen.md](docs/entscheidungen.md).
 - **Logik** (E6, E7): DOM-freie Module `core-*.js` im Root, klassisch per
   `defer` geladen, ein globaler Namensraum `RetroLos`; in Node per `require`
   testbar.
-- **Umbau** (E54): eine Seite `index.html`, Logik `core-segelboot.js`, kein
+- **Umbau** (E54, E58): eine Seite `index.html`, Logik `core-retro.js`, kein
   Mehrbenutzer-Modus.
+- **Formate** (E58): nur in `FORMATS` in `core-retro.js` pflegen.
 - **Steckbrief** (E8): `miniapp.md` mit YAML-Frontmatter (kein `.json`).
 - **JavaScript** (E13): Inhalte, Erklärung und Navigation funktionieren ohne
   JavaScript; die Werkzeug-Funktionen brauchen es und sagen das per

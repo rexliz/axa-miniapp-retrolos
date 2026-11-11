@@ -1,20 +1,39 @@
-# RetroLos! – Segeltörn-Retro
+# RetroLos! – Mini-Retro
 
-Eine schmale Mini-App für die persönliche Retro als Segeltörn: **Wind, Anker, Felsen, Insel** – und bis zu drei nächste Schritte. Eine Person, ein Gerät, keine Daten auf einem Server.
+Eine schmale Mini-App für die persönliche Retro: **Format wählen, Notizen sammeln, höchstens drei nächste Schritte festlegen.** Eine Person, ein Gerät, keine Daten auf einem Server.
 
 **▶ Live:** https://rexliz.github.io/axa-miniapp-retrolos/
 
 > Hackathon-Prototyp eines ZHAW-Teams (AXA-Hackathon 2026, Plattform «AXALos!»), **Lösung 1 «Solo Workout»**. Steckbrief: [miniapp.md](miniapp.md).
 
-![RetroLos! mit Segelboot, vier Zonen und Kurs](docs/screenshot.png)
+![RetroLos! mit Formatauswahl, Zonen und nächsten Schritten](docs/screenshot.png)
 
 ## So funktioniert's
 
-1. Notizen in die vier Zonen schreiben: **Wind** (was treibt uns an?), **Anker** (was bremst?), **Felsen** (Risiken), **Insel** (Ziel). Das Boot segelt mit jeder Wind-Notiz weiter, Anker bremsen, Felsen tauchen auf.
-2. **Kurs setzen:** höchstens drei nächste Schritte, optional mit Termin.
-3. **Logbuch speichern (.md)** oder **Text kopieren** – z. B. für Teams, OneNote oder eine Mail.
+1. **Format wählen** – 13 Formate, Standard ist das **Segelboot** mit animierter Szene (Wind schiebt das Boot, Anker bremsen, Felsen tauchen auf).
+2. **Notizen** in die Zonen des Formats schreiben. Notizen bleiben pro Format gespeichert – ein Wechsel löscht nichts.
+3. **Nächste Schritte:** höchstens drei, optional mit Termin.
+4. **Logbuch speichern (.md)** oder **Text kopieren**. Alles wird automatisch im Browser gespeichert; «Neu beginnen» löscht den Stand.
 
-Alles wird automatisch im Browser gespeichert. «Neu beginnen» löscht den Stand.
+| Format | Gut geeignet für |
+|---|---|
+| ⛵ Segelboot | Hindernisse und Risiken |
+| 🚦 Ampel | Allrounder |
+| 🎈 Heissluftballon | Motivation und Blocker |
+| 😤 Mad – Sad – Glad | Stimmung im Team |
+| ⭐ Start – Stop – Continue | sehr handlungsorientiert |
+| 🧟 Zombie-Scrum | eingefahrene Teams |
+| 🗑️ Kill one thing | Prozesse entschlacken |
+| 🪄 Zauberstab | Wünsche sichtbar machen |
+| 🏆 Sprint Awards | lockerer Einstieg |
+| 🕵️ Sherlock Retro | tiefere Ursachenanalyse |
+| 🎬 Unser Sprint als Film | kreativer Einstieg |
+| 🌟 1 Stern / 5 Sterne | kleine Verbesserungen finden |
+| 📰 Breaking News | Themen auf den Punkt bringen |
+
+## Neues Format hinzufügen
+
+In [`core-retro.js`](core-retro.js) im Array `FORMATS` einen Block ergänzen (`key`, `emoji`, `name`, `fitsFor`, `zones` mit 1–5 Einträgen aus `key`, `emoji`, `name`, `question`). Danach `node --test "tests/*.test.js"` – der Test prüft die Einträge.
 
 ## Lokal starten und testen
 
@@ -27,13 +46,13 @@ node --test "tests/*.test.js"
 ## Struktur
 
 ```
-index.html          die einzige Seite (Zonen im HTML)
-styles.css          Design-Tokens (AXA-Look: Tiefblau, Rot als Akzent, hell/dunkel)
-core-segelboot.js   Logik ohne DOM: Zonen, Kurs des Boots, Markdown, Kurztext
-core-privacy.js     Datenschutz-Muster (E-Mail, Telefon, IBAN, AHV, lange Nummern)
-ui.js  effects.js   UI-Helfer, Segelboot-Szene (SVG), Konfetti
-app.js              Oberfläche
-tests/              node --test
+index.html        die einzige Seite
+styles.css        Design-Tokens (AXA-Look: Tiefblau, Rot als Akzent, hell/dunkel)
+core-retro.js     Logik ohne DOM: Formate, Notizen, Segelboot-Kurs, Markdown, Kurztext
+core-privacy.js   Datenschutz-Muster (E-Mail, Telefon, IBAN, AHV, lange Nummern)
+ui.js  effects.js UI-Helfer, Segelboot-Szene (SVG), Konfetti
+app.js            Oberfläche
+tests/            node --test
 ```
 
 ## Datenschutz-Prinzip
@@ -44,7 +63,7 @@ tests/              node --test
 
 ## Grenzen des Prototyps
 
-- Nur ein Gerät: Browserdaten löschen = Törn weg; vorher das Logbuch speichern.
+- Nur ein Gerät: Browserdaten löschen = Stand weg; vorher das Logbuch speichern.
 - Gespeicherte Logbücher lassen sich nicht wieder einlesen.
 - Automatisch getestet in Chrome (Desktop, Handy-Breite, hell/dunkel).
 
