@@ -55,3 +55,6 @@ Entscheide, die vom Template abweichen, stehen zusätzlich kurz in [AGENTS.md](.
 | E48 | 2026-11-11 | Druckansicht des Protokolls als eigener, nur beim Drucken sichtbarer Bereich (`body.is-printing-protocol`). | Die Moderationsansicht ist zum Drucken ungeeignet. | Claude |
 | E49 | 2026-11-11 | «Alle Daten löschen» entfernt alle `retrolos:`-Einträge und führt zur Startseite (sonst würde die Seite sofort wieder einen leeren Plan speichern). | Sauberes Löschen auf geteilten Geräten. | Claude |
 | E50 | 2026-11-11 | Statischer Seiten-Test `tests/pages.test.js`: Script-Abhängigkeiten und Reihenfolge, CSP, keine Inline-Scripts/-Styles, nur relative Pfade, alle Dateien vorhanden, Banner und eine h1. | Ein fehlendes `<script>` (Protokoll-Import auf «Planen») fiel sonst erst im Browser auf. | Claude |
+| E51 | 2026-11-11 | Owner im Steckbrief vorerst «ZHAW-Team – Owner-Person: TODO». | Vom Team noch nicht festgelegt; laut AGENTS.md wird nicht geraten. | Claude |
+| E52 | 2026-11-11 | Screenshots für das README von der Live-Version (`docs/screenshot-*.png`), aufgenommen mit headless Chrome. | Zeigt den echten Stand; PNG ist ein erlaubter Dateityp. | Claude |
+| E53 | 2026-11-11 | Test-Beispiel für ein unbekanntes Format heisst `gibt-es-nicht-xyz` statt `zeitmaschine`. | Ein Team, das ein echtes Format «Zeitmaschine» ergänzt, bekäme sonst einen roten Test. | Claude |
