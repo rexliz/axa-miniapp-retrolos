@@ -8,6 +8,14 @@
   <title>Importieren und moderieren – RetroLos!</title>
   <link rel="icon" href="favicon.svg" type="image/svg+xml">
   <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="moderieren.css">
+  <script src="config.js" defer></script>
+  <script src="core-plan.js" defer></script>
+  <script src="core-markdown.js" defer></script>
+  <script src="core-board.js" defer></script>
+  <script src="ui.js" defer></script>
+  <script src="effects.js" defer></script>
+  <script src="moderieren.js" defer></script>
 </head>
 <body>
   <a class="skip-link" href="#inhalt">Zum Inhalt springen</a>
@@ -44,14 +52,171 @@
     </div>
   </aside>
 
-  <main id="inhalt" class="container">
-    <section class="section">
+  <main id="inhalt" class="container moderate">
+    <header class="page-intro">
       <h1>Importieren und moderieren</h1>
-      <div class="notice">
-        <p>Hier importierst du bald die Beiträge deines Teams und moderierst die Retro Schritt für Schritt. Diese Seite entsteht gerade (Phase 4).</p>
+      <p class="section-intro">Lade die Dateien deines Teams, teile deinen Bildschirm in Teams und führe durch die fünf Phasen. Alles bleibt in diesem Browser.</p>
+    </header>
+
+    <noscript>
+      <div class="notice"><p>Import und Moderation brauchen JavaScript. Wie eine Retro abläuft, steht auf der <a href="index.html">Startseite</a>.</p></div>
+    </noscript>
+
+    <section class="panel import-panel no-print" id="import-panel" aria-labelledby="import-title">
+      <h2 id="import-title"><span class="step-badge" aria-hidden="true">A</span>Beiträge importieren</h2>
+      <p class="retro-context" id="retro-context">–</p>
+      <div class="notice" id="board-mismatch" hidden>
+        <p id="board-mismatch-text"></p>
+        <div class="button-row">
+          <button type="button" class="button button-secondary" id="board-keep">Damit weitermachen</button>
+          <button type="button" class="button button-primary" id="board-new">Neues Board für die geplante Retro</button>
+        </div>
       </div>
-      <p><a href="index.html">Zurück zur Startseite</a></p>
+      <div class="dropzone" id="dropzone">
+        <p class="dropzone-title"><span aria-hidden="true">📂</span> .md-Dateien hierher ziehen</p>
+        <p class="dropzone-or">oder</p>
+        <div class="button-row">
+          <button type="button" class="button button-primary" id="pick-files">Dateien wählen</button>
+          <button type="button" class="button button-secondary" id="pick-folder" hidden>Ordner wählen</button>
+        </div>
+        <input id="file-input" class="visually-hidden" type="file" accept=".md,.markdown,.txt,text/markdown,text/plain" multiple tabindex="-1" aria-hidden="true">
+        <input id="folder-input" class="visually-hidden" type="file" webkitdirectory multiple tabindex="-1" aria-hidden="true">
+        <p class="field-hint" id="folder-hint" hidden>Mit «Ordner wählen» liest du alle Dateien eines synchronisierten Teams- oder OneDrive-Ordners auf einmal.</p>
+      </div>
+      <div class="import-report" id="import-report" aria-live="polite"></div>
+      <p class="board-stats" id="board-stats"></p>
+      <details class="manual-setup">
+        <summary>Ohne Planung starten oder neues Board anlegen</summary>
+        <form id="setup-form" class="setup-form">
+          <div class="field-grid">
+            <div class="field">
+              <label for="setup-sprint">Sprint</label>
+              <input id="setup-sprint" type="text" maxlength="60" placeholder="z. B. Sprint 12">
+            </div>
+            <div class="field">
+              <label for="setup-date">Datum der Retro</label>
+              <input id="setup-date" type="date">
+            </div>
+            <div class="field">
+              <label for="setup-format">Format</label>
+              <select id="setup-format"></select>
+            </div>
+          </div>
+          <button type="submit" class="button button-secondary">Neues, leeres Board anlegen</button>
+        </form>
+      </details>
     </section>
+
+    <section class="moderation" id="moderation" aria-labelledby="moderation-title">
+      <div class="moderation-bar no-print">
+        <h2 id="moderation-title" class="moderation-title"><span class="step-badge" aria-hidden="true">B</span>Moderation</h2>
+        <ol class="stepper" id="stepper" aria-label="Phasen der Retro"></ol>
+        <div class="moderation-tools">
+          <button type="button" class="button button-secondary" id="prev"><span aria-hidden="true">←</span> Zurück</button>
+          <button type="button" class="button button-primary" id="next">Weiter <span aria-hidden="true">→</span></button>
+          <button type="button" class="button button-ghost" id="fullscreen"><span aria-hidden="true">⛶</span> <span id="fullscreen-label">Vollbild</span></button>
+          <label class="toggle"><input type="checkbox" id="show-initials"> <span>Kürzel anzeigen</span></label>
+          <label class="toggle"><input type="checkbox" id="sound"> <span>Ton am Phasenende</span></label>
+        </div>
+        <p class="keyboard-hint">Tipp: Mit den Pfeiltasten <kbd>←</kbd> <kbd>→</kbd> wechselst du die Phase.</p>
+      </div>
+
+      <div class="moderation-head">
+        <div class="phase-intro" aria-live="polite">
+          <p class="phase-kicker" id="phase-kicker">Phase 1 von 5</p>
+          <h3 class="phase-title" id="phase-title">Einstimmen</h3>
+          <p class="phase-hint" id="phase-hint"></p>
+        </div>
+        <div class="timer no-print" id="timer">
+          <div class="timer-dial">
+            <svg class="timer-ring" viewBox="0 0 120 120" aria-hidden="true" focusable="false">
+              <circle class="timer-track" cx="60" cy="60" r="52"/>
+              <circle class="timer-progress" id="timer-progress" cx="60" cy="60" r="52"/>
+            </svg>
+            <p class="timer-time" id="timer-time">05:00</p>
+          </div>
+          <div class="timer-buttons">
+            <button type="button" class="button button-primary" id="timer-toggle">Start</button>
+            <button type="button" class="button button-secondary" id="timer-plus">+1 Min.</button>
+            <button type="button" class="button button-ghost" id="timer-reset">Zurücksetzen</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="phase-panel" id="panel-checkin">
+        <div class="checkin-stage">
+          <p class="checkin-label">Check-in-Frage</p>
+          <p class="checkin-big" id="checkin-big">–</p>
+          <button type="button" class="button button-ghost no-print" id="checkin-other">Andere Frage</button>
+        </div>
+        <div class="mood">
+          <h4 class="mood-title">Stimmung im Team <span class="mood-total" id="mood-total"></span></h4>
+          <ul class="mood-bars" id="mood-bars"></ul>
+          <p class="mood-empty" id="mood-empty">Noch keine Beiträge importiert – die Wetter-Auswertung erscheint nach dem Import.</p>
+        </div>
+      </div>
+
+      <div class="phase-panel" id="panel-board" hidden>
+        <div class="board-toolbar no-print" id="board-toolbar">
+          <p class="board-help" id="board-help"></p>
+          <button type="button" class="button button-primary" id="group-button" hidden disabled>Ausgewählte zusammenfassen</button>
+        </div>
+        <div class="scene-host" id="board-scene" hidden></div>
+        <div class="board" id="board"></div>
+      </div>
+
+      <div class="phase-panel" id="panel-decide" hidden>
+        <div class="decide-grid">
+          <section class="decide-topics" aria-labelledby="topics-title">
+            <h4 id="topics-title">Top-Themen nach Punkten</h4>
+            <ol class="topic-list" id="topic-list"></ol>
+          </section>
+          <section class="decide-actions" aria-labelledby="actions-title">
+            <h4 id="actions-title">Massnahmen</h4>
+            <form id="action-form" class="action-form no-print">
+              <div class="field">
+                <label for="action-what">Was tun wir konkret?</label>
+                <textarea id="action-what" rows="2" maxlength="300"></textarea>
+              </div>
+              <div class="field-grid">
+                <div class="field">
+                  <label for="action-who">Wer <span class="optional">(Rolle oder Kürzel)</span></label>
+                  <input id="action-who" type="text" maxlength="30" placeholder="z. B. SM, PO, Dev-Team" list="role-list" autocomplete="off">
+                </div>
+                <div class="field">
+                  <label for="action-due">Bis wann</label>
+                  <input id="action-due" type="date">
+                </div>
+              </div>
+              <button type="submit" class="button button-primary">Massnahme hinzufügen</button>
+            </form>
+            <datalist id="role-list">
+              <option value="SM"></option>
+              <option value="PO"></option>
+              <option value="Dev-Team"></option>
+              <option value="ganzes Team"></option>
+            </datalist>
+            <div class="notice" id="action-hint" hidden><p>Ihr habt schon mehr als 3 Massnahmen. Weniger ist oft mehr: 1–3 Massnahmen schafft ein Team im nächsten Sprint wirklich.</p></div>
+            <ol class="action-list" id="action-list"></ol>
+          </section>
+        </div>
+      </div>
+
+      <div class="phase-panel" id="panel-close" hidden>
+        <div class="feedback">
+          <p class="feedback-question">Wie hilfreich war diese Retro? Jede Person nennt eine Note – klicke pro Stimme einmal.</p>
+          <div class="feedback-scale" id="feedback-scale"></div>
+          <p class="feedback-stats" id="feedback-stats" aria-live="polite"></p>
+          <div class="button-row no-print">
+            <button type="button" class="button button-ghost" id="feedback-undo">Letzte Stimme zurücknehmen</button>
+            <button type="button" class="button button-primary button-large" id="finish"><span aria-hidden="true">🎉</span> Retro abschliessen</button>
+          </div>
+        </div>
+        <div class="finish-area" id="finish-area" hidden></div>
+      </div>
+    </section>
+
+    <div id="status" class="toast" role="status" aria-live="polite"></div>
   </main>
 
   <footer class="site-footer">
