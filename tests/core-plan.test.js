@@ -1,5 +1,5 @@
 'use strict';
-// Tests für core-plan.js – ausführen mit: node --test tests/
+// Tests für core-plan.js – ausführen mit: node --test "tests/*.test.js"
 const test = require('node:test');
 const assert = require('node:assert/strict');
 const config = require('../config.js');
