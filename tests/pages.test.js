@@ -47,7 +47,8 @@ for (const page of pages) {
   });
 
   test(`${page}: nur relative Pfade und alle lokalen Dateien vorhanden`, () => {
-    for (const [, url] of html.matchAll(/\b(?:href|src)="([^"#]+)/g)) {
+    for (const [, raw] of html.matchAll(/\b(?:href|src)="([^"#]+)/g)) {
+      const url = raw.split('?')[0];
       if (/^https:\/\/github\.com\//.test(url)) continue; // Link zum Quellcode (Navigation, keine Anfrage)
       assert.doesNotMatch(url, /^(\/|https?:|\/\/)/, `${url} ist nicht relativ`);
       assert.ok(fs.existsSync(path.join(root, url)), `${url} fehlt`);
@@ -55,7 +56,7 @@ for (const page of pages) {
   });
 
   test(`${page}: jedes Script findet seine Module (richtige Reihenfolge)`, () => {
-    const files = scripts.map(([, attrs]) => /src="([^"]+)"/.exec(attrs)[1]);
+    const files = scripts.map(([, attrs]) => /src="([^"?]+)/.exec(attrs)[1]);
     files.forEach((file, i) => {
       const js = fs.readFileSync(path.join(root, file), 'utf8');
       usedModules(js).forEach((mod) => {
@@ -75,3 +76,17 @@ for (const page of pages) {
     assert.doesNotMatch(html.replace(/<script[\s\S]*?<\/script>/g, ''), /ß/);
   });
 }
+
+test('index.html: Auswahlfeld enthält alle Formate (funktioniert auch bei altem Script im Cache)', () => {
+  const R = require('../core-retro.js');
+  const html = fs.readFileSync(path.join(root, 'index.html'), 'utf8');
+  const keys = [...html.matchAll(/<option value="([^"]+)"/g)].map((m) => m[1]);
+  assert.deepEqual(keys, R.FORMATS.map((f) => f.key));
+});
+
+test('index.html: alle eigenen Scripts und Styles tragen dieselbe Versionsnummer', () => {
+  const html = fs.readFileSync(path.join(root, 'index.html'), 'utf8');
+  const versions = [...html.matchAll(/(?:href|src)="[^"]+\.(?:js|css)\?v=(\d+)"/g)].map((m) => m[1]);
+  assert.ok(versions.length >= 6);
+  assert.equal(new Set(versions).size, 1);
+});

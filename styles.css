@@ -347,6 +347,10 @@ select {
   line-height: 1;
 }
 
+.print-title {
+  display: none;
+}
+
 #trip-title {
   width: min(20rem, 70vw);
 }
@@ -625,8 +629,9 @@ select {
   align-items: flex-start;
   gap: var(--space-2);
   padding: var(--space-2) var(--space-3);
+  border: var(--border);
   border-left: 3px solid var(--color-red);
-  background: var(--color-surface-alt);
+  background: var(--color-surface);
   animation: card-in var(--motion-base) var(--motion-ease);
 }
 
@@ -679,9 +684,11 @@ select {
 
 /* ---------- Kurs ---------- */
 
-.kurs {
-  padding-block: var(--space-6);
-  background: var(--color-surface-alt);
+.kurs .container {
+  padding: var(--space-5);
+  border-top: 4px solid var(--color-red);
+  background: var(--color-surface);
+  box-shadow: var(--shadow-card);
 }
 
 .kurs .container {
@@ -702,8 +709,8 @@ select {
   align-items: center;
   gap: var(--space-3);
   padding: var(--space-3) var(--space-4);
+  border: var(--border);
   background: var(--color-surface);
-  box-shadow: var(--shadow-card);
   counter-increment: action;
   animation: card-in var(--motion-base) var(--motion-ease);
 }
@@ -837,6 +844,36 @@ select {
     --shadow-card: none;
   }
 
+  .zone,
+  .action,
+  .card {
+    break-inside: avoid;
+  }
+
+  /* Hintergründe werden meist nicht gedruckt: Nummer mit Rahmen statt Fläche */
+  .action::before {
+    border: 2px solid var(--color-primary);
+    color: var(--color-primary);
+  }
+
+  .kurs .zone-question {
+    display: none;
+  }
+
+  .print-title {
+    display: block;
+    color: var(--color-primary);
+    font-family: var(--font-display);
+    font-size: var(--font-size-xl);
+    font-weight: var(--font-weight-bold);
+  }
+
+  .hero h1,
+  .trip,
+  .sea,
+  .privacy-hint,
+  .site-header,
+  .skip-link,
   .banner,
   .site-footer,
   .zone-add,

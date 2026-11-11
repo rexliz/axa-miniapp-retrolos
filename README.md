@@ -13,7 +13,7 @@ Eine schmale Mini-App für die persönliche Retro: **Format wählen, Notizen sam
 1. **Format wählen** – 13 Formate, Standard ist das **Segelboot** mit animierter Szene (Wind schiebt das Boot, Anker bremsen, Felsen tauchen auf).
 2. **Notizen** in die Zonen des Formats schreiben. Notizen bleiben pro Format gespeichert – ein Wechsel löscht nichts.
 3. **Nächste Schritte:** höchstens drei, optional mit Termin.
-4. **Logbuch speichern (.md)** oder **Text kopieren**. Alles wird automatisch im Browser gespeichert; «Neu beginnen» löscht den Stand.
+4. **Als .md speichern**, **Als PDF speichern** (über den Druckdialog des Browsers: «Als PDF speichern» wählen) oder **Text kopieren**. Alles wird automatisch im Browser gespeichert; «Neu beginnen» löscht den Stand.
 
 | Format | Gut geeignet für |
 |---|---|
@@ -34,6 +34,10 @@ Eine schmale Mini-App für die persönliche Retro: **Format wählen, Notizen sam
 ## Neues Format hinzufügen
 
 In [`core-retro.js`](core-retro.js) im Array `FORMATS` einen Block ergänzen (`key`, `emoji`, `name`, `fitsFor`, `zones` mit 1–5 Einträgen aus `key`, `emoji`, `name`, `question`). Danach `node --test "tests/*.test.js"` – der Test prüft die Einträge.
+
+## Nach einer Änderung
+
+Die Versionsnummer `?v=…` an allen Script- und Style-Links in `index.html` um 1 erhöhen. GitHub Pages hält Dateien 10 Minuten im Browser-Cache; ohne neue Nummer kann neues HTML auf altes JavaScript treffen. Ein Test prüft, dass alle Links dieselbe Nummer tragen.
 
 ## Lokal starten und testen
 

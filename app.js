@@ -97,14 +97,19 @@
     scene.update(c);
   }
 
+  // Die Optionen stehen im HTML; nur falls eine fehlt, wird sie ergänzt.
   const select = $('format');
-  R.FORMATS.forEach((f) => select.append(ui.el('option', { value: f.key, text: f.emoji + ' ' + f.name })));
-  select.addEventListener('change', () => {
-    if (R.setFormat(log, select.value)) {
+  R.FORMATS.forEach((f) => {
+    if (!select.querySelector('option[value="' + f.key + '"]')) select.append(ui.el('option', { value: f.key, text: f.emoji + ' ' + f.name }));
+  });
+  const onFormat = () => {
+    if (select.value !== log.format && R.setFormat(log, select.value)) {
       save();
       renderFormat();
     }
-  });
+  };
+  select.addEventListener('change', onFormat);
+  select.addEventListener('input', onFormat);
 
   /* ---------- Törn ---------- */
 
@@ -168,6 +173,16 @@
   $('save').addEventListener('click', () => {
     ui.download(R.fileName(log), R.toMarkdown(log));
     ui.announce('Gespeichert: ' + R.fileName(log), 'success');
+  });
+
+  // PDF über den Druckdialog des Browsers («Als PDF speichern») – ohne Bibliothek.
+  $('pdf').addEventListener('click', () => {
+    const f = R.format(log);
+    $('print-title').textContent = f.emoji + ' ' + (log.title || 'Retro') + ' – ' + f.name + ' · ' + R.formatDate(log.date);
+    document.title = R.fileName(log).replace(/\.md$/, '');
+    ui.announce('Im Druckdialog «Als PDF speichern» wählen.');
+    window.print();
+    document.title = 'RetroLos! – Mini-Retro';
   });
 
   $('copy').addEventListener('click', async () => {
