@@ -1,7 +1,7 @@
 /* ==========================================================================
    RetroLos! – Logik der Retro (ohne DOM)
    Eine Person, ein Logbuch: Format wählen, Notizen pro Zone, bis zu drei
-   nächste Schritte, Export als Markdown. Neue Formate kommen nur in FORMATS
+   nächste Schritte, Export als PDF oder Text. Neue Formate kommen nur in FORMATS
    dazu. Läuft im Browser (RetroLos.retro) und in Node (require) für Tests.
    ========================================================================== */
 (function (root, factory) {
@@ -251,30 +251,9 @@
     return m ? m[3] + '.' + m[2] + '.' + m[1] : '';
   }
 
+  // Name für die PDF-Datei (der Browser übernimmt den Seitentitel)
   function fileName(log) {
-    return 'retro-' + format(log).key + '-' + log.date + '.md';
-  }
-
-  function toMarkdown(log) {
-    const f = format(log);
-    const title = log.title || 'Retro';
-    const lines = [
-      '---',
-      'retrolos: 3',
-      'typ: retro',
-      'format: ' + f.key,
-      'titel: ' + JSON.stringify(title),
-      'datum: ' + log.date,
-      '---',
-      '# ' + title + ' – ' + f.name + ' vom ' + formatDate(log.date),
-    ];
-    f.zones.forEach((z) => {
-      lines.push('', '## ' + z.name + ' – ' + z.question);
-      zoneCards(log, z.key).forEach((t) => lines.push('- ' + t));
-    });
-    lines.push('', '## Nächste Schritte');
-    log.actions.forEach((a) => lines.push('- [ ] ' + a.what + (a.due ? ' (bis ' + formatDate(a.due) + ')' : '')));
-    return lines.join('\n') + '\n';
+    return 'retro-' + format(log).key + '-' + log.date;
   }
 
   function summaryText(log) {
@@ -295,6 +274,6 @@
   return {
     FORMATS, DEFAULT_FORMAT, MAX_ACTIONS, todayIso, cleanText, findFormat, format, createLog, normalize,
     setFormat, zoneCards, addCard, removeCard, addAction, removeAction, count, course, formatDate,
-    fileName, toMarkdown, summaryText,
+    fileName, summaryText,
   };
 });

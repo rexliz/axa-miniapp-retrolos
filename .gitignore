@@ -16,4 +16,5 @@ Thumbs.db
 # Sie gehören in den Teams-Kanal bzw. den Team-Ordner, nie ins Repository:
 # Repo und GitHub-Pages-Seite sind öffentlich.
 retro-*.md
+retro-*.pdf
 retros/

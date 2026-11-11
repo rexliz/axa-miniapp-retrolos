@@ -13,7 +13,7 @@ Eine schmale Mini-App für die persönliche Retro: **Format wählen, Notizen sam
 1. **Format wählen** – 13 Formate, Standard ist das **Segelboot** mit animierter Szene (Wind schiebt das Boot, Anker bremsen, Felsen tauchen auf).
 2. **Notizen** in die Zonen des Formats schreiben. Notizen bleiben pro Format gespeichert – ein Wechsel löscht nichts.
 3. **Nächste Schritte:** höchstens drei, optional mit Termin.
-4. **Als .md speichern**, **Als PDF speichern** (über den Druckdialog des Browsers: «Als PDF speichern» wählen) oder **Text kopieren**. Alles wird automatisch im Browser gespeichert; «Neu beginnen» löscht den Stand.
+4. **Als PDF speichern** (über den Druckdialog des Browsers: «Als PDF speichern» wählen) oder **Text kopieren**. Alles wird automatisch im Browser gespeichert; «Neu beginnen» löscht den Stand.
 
 | Format | Gut geeignet für |
 |---|---|
@@ -52,7 +52,7 @@ node --test "tests/*.test.js"
 ```
 index.html        die einzige Seite
 styles.css        Design-Tokens (AXA-Look: Tiefblau, Rot als Akzent, hell/dunkel)
-core-retro.js     Logik ohne DOM: Formate, Notizen, Segelboot-Kurs, Markdown, Kurztext
+core-retro.js     Logik ohne DOM: Formate, Notizen, Segelboot-Kurs, Kurztext
 core-privacy.js   Datenschutz-Muster (E-Mail, Telefon, IBAN, AHV, lange Nummern)
 ui.js  effects.js UI-Helfer, Segelboot-Szene (SVG), Konfetti
 app.js            Oberfläche
@@ -63,12 +63,12 @@ tests/            node --test
 
 - **Keine Kunden- oder Personendaten.** Ein Banner erinnert daran; der Datenschutz-Wächter zeigt einen Hinweis bei E-Mail-Adressen, Telefonnummern, IBAN, AHV- und langen Nummern. **Das ist ein Hinweis, kein vollständiger Schutz** – Namen erkennt er nicht.
 - **Single-User, kein Server, kein Teilen.** Keine Sessions, keine Links, kein Login, kein Tracking, keine externen Anfragen (CSP `default-src 'self'`). Daten bleiben im `localStorage` dieses Browsers.
-- **Logbücher gehören nie ins Repo.** Die `.gitignore` schliesst `retro-*.md` und `retros/` aus.
+- **Ergebnisse gehören nie ins Repo.** Die `.gitignore` schliesst `retro-*` und `retros/` aus.
 
 ## Grenzen des Prototyps
 
-- Nur ein Gerät: Browserdaten löschen = Stand weg; vorher das Logbuch speichern.
-- Gespeicherte Logbücher lassen sich nicht wieder einlesen.
+- Nur ein Gerät: Browserdaten löschen = Stand weg; vorher ein PDF speichern.
+- Ein gespeichertes PDF lässt sich nicht wieder einlesen.
 - Automatisch getestet in Chrome (Desktop, Handy-Breite, hell/dunkel).
 
 ## Doku
