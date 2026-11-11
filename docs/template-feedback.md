@@ -50,6 +50,7 @@ Auswirkung: **blockierend** (ohne Hilfe geht es nicht weiter) · **störend** (k
 | 19 | README «Quick Start» Schritt 4 | «Datei direkt öffnen» ist der empfohlene lokale Weg. Alles, was die App zum Teilen erzeugt (Links, QR-Codes), zeigt dann auf eine `file://`-Adresse, die bei anderen nicht funktioniert. | Schönheitsfehler | Hinweis ins README; Konvention für eine Konfigurationszeile mit der Live-Adresse. | offen – Entscheid Stefan (RetroLos!: E18) |
 | 20 | AGENTS.md «CSS» | «No inline style» lässt offen, ob per JavaScript gesetzte Werte (`el.style.flexGrow`) erlaubt sind. Mit CSP sind sie erlaubt (CSSOM), `style="…"`-Attribute nicht. | Schönheitsfehler | Präzisieren: kein `style`-Attribut im HTML; dynamische Werte per `element.style.<prop>` oder Custom Property sind ok. | offen – Entscheid Stefan |
 | 21 | AGENTS.md «CSS» | Dark Mode ist vorgeschrieben, Drucken nicht geregelt: Im Dark Mode druckt der Browser helle Schrift ohne Hintergrund, also unlesbar. | störend | Regel: `@media print` setzt immer die helle Palette (Tokens neu belegen). | behoben in RetroLos! (`57c4f62`) |
+| 22 | AGENTS.md «Definition of Done» | Einziger Prüfschritt ist «im Browser öffnen, auch ohne JavaScript». Browser-Konsole, Netzwerk-Tab (externe Anfragen!), Handy-Breite, Dark Mode und Tastaturbedienung fehlen in der Checkliste – genau dort zeigten sich in RetroLos! die Fehler. | störend | DoD-Checkliste ergänzen: keine Konsolenfehler, keine fremden Anfragen im Netzwerk-Tab, 390 px Breite, Dark Mode, nur Tastatur. | offen – Entscheid Stefan |
 
 ## Übertrag ins Template
 
