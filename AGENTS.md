@@ -10,19 +10,16 @@ the website: what is in git is byte-for-byte what the browser receives, with
 nothing between source and output.
 
 **Dieses Repository ist die Mini-App «RetroLos!»** (AXA-Hackathon, Plattform
-«AXALos!», Lösung 1 «Solo Workout»). Sie hilft Scrum Mastern, Retrospektiven zu
-planen, die Karten des Teams zeitversetzt über `.md`-Dateien zu sammeln, die
-Retro per Bildschirm-Teilen zu moderieren und ein Protokoll zu erzeugen.
+«AXALos!», Lösung 1 «Solo Workout»): eine schmale Einzelnutzer-Retro im Format
+Segelboot (Wind, Anker, Felsen, Insel, bis zu drei nächste Schritte) mit Export
+als Markdown.
 
-- **Zielgruppe:** Scrum Master und Scrum-Teams bei AXA, auch Scrum-Neulinge.
-- **Nicht-Ziele:** Server, Datenbank, Login, Live-Synchronisation, Schreiben
-  ins Repo aus dem Browser, KI-Aufrufe, externe Dienste, Tracking.
-- **Daten:** keine Kunden- oder Personendaten. Eingaben bleiben im Browser
-  (`localStorage`) und in `.md`-Dateien, die das Team selbst ablegt.
-  **Retro-Dateien gehören nie ins Repository** (`.gitignore`: `retro-*.md`,
-  `retros/`; Ausnahme `docs/beispiele/`).
-- Dateiformat: [docs/dateiformat.md](docs/dateiformat.md) · Entscheide:
-  [docs/entscheidungen.md](docs/entscheidungen.md) · Template-Lücken:
+- **Zielgruppe:** Mitarbeitende, die allein eine Retro machen.
+- **Nicht-Ziele:** mehrere Personen, Sessions, Teilen/Links, Agenda, Server,
+  Login, externe Dienste, Tracking.
+- **Daten:** keine Kunden- oder Personendaten; nur `localStorage` und die
+  selbst gespeicherte `.md`-Datei (`.gitignore`: `retro-*.md`, `retros/`).
+- Entscheide: [docs/entscheidungen.md](docs/entscheidungen.md) · Template-Lücken:
   [docs/template-feedback.md](docs/template-feedback.md).
 
 ## Stack
@@ -178,6 +175,8 @@ Begründungen: [docs/entscheidungen.md](docs/entscheidungen.md).
 - **Logik** (E6, E7): DOM-freie Module `core-*.js` im Root, klassisch per
   `defer` geladen, ein globaler Namensraum `RetroLos`; in Node per `require`
   testbar.
+- **Umbau** (E54): eine Seite `index.html`, Logik `core-segelboot.js`, kein
+  Mehrbenutzer-Modus.
 - **Steckbrief** (E8): `miniapp.md` mit YAML-Frontmatter (kein `.json`).
 - **JavaScript** (E13): Inhalte, Erklärung und Navigation funktionieren ohne
   JavaScript; die Werkzeug-Funktionen brauchen es und sagen das per

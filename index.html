@@ -4,151 +4,148 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'self'; form-action 'self'; object-src 'none'">
-  <meta name="description" content="RetroLos! hilft Scrum Mastern, Retrospektiven zu planen, Beiträge des Teams zu sammeln und zu moderieren – ohne Server und ohne Login.">
-  <title>RetroLos! – Retros leicht gemacht</title>
+  <meta name="description" content="RetroLos! – deine Retro als Segeltörn: Wind, Anker, Felsen, Insel und bis zu drei nächste Schritte.">
+  <title>RetroLos! – Segeltörn-Retro</title>
   <link rel="icon" href="favicon.svg" type="image/svg+xml">
   <link rel="stylesheet" href="styles.css">
-  <script src="index.js" defer></script>
+  <script src="core-segelboot.js" defer></script>
+  <script src="core-privacy.js" defer></script>
+  <script src="ui.js" defer></script>
+  <script src="effects.js" defer></script>
+  <script src="app.js" defer></script>
 </head>
 <body>
   <a class="skip-link" href="#inhalt">Zum Inhalt springen</a>
 
   <header class="site-header">
-    <div class="container site-header-inner">
-      <a class="brand" href="index.html">
-        <svg class="brand-logo" viewBox="0 0 40 40" aria-hidden="true" focusable="false">
-          <rect class="brand-logo-bg" width="40" height="40" rx="11"/>
-          <path class="brand-logo-line" d="M29 20a9 9 0 1 1-2.64-6.36L29 16.3"/>
-          <path class="brand-logo-line" d="M29 10.5v5.8h-5.8"/>
-          <circle class="brand-logo-dot" cx="20" cy="20" r="2.8"/>
-        </svg>
-        <span>Retro<span class="brand-accent">Los!</span></span>
-      </a>
-      <nav class="site-nav" aria-label="Hauptnavigation">
-        <ul>
-          <li><a href="index.html" aria-current="page">Start</a></li>
-          <li><a href="planen.html">Planen</a></li>
-          <li><a href="teilnehmen.html">Teilnehmen</a></li>
-          <li><a href="moderieren.html">Moderieren</a></li>
-        </ul>
-      </nav>
+    <div class="container header-inner">
+      <a class="brand" href="index.html">RetroLos<span class="brand-accent">!</span></a>
+      <span class="brand-tag">Segeltörn-Retro</span>
     </div>
   </header>
 
-  <aside class="banner" aria-label="Hinweis zum Prototyp">
-    <div class="container banner-inner">
-      <svg class="banner-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-        <circle cx="12" cy="12" r="10"/>
-        <path d="M12 7.5v5.5M12 16.5v.01"/>
-      </svg>
-      <p><strong>Hackathon-Prototyp</strong> – keine Kunden- oder Personendaten eingeben. Deine Eingaben bleiben in deinem Browser, bis du sie selbst als Datei speicherst.</p>
-    </div>
-  </aside>
+  <div class="banner">
+    <p class="container"><strong>Hackathon-Prototyp</strong> – keine Kunden- oder Personendaten eingeben. Alles bleibt in deinem Browser.</p>
+  </div>
 
-  <main id="inhalt" class="container">
-    <section class="hero">
-      <div>
-        <p class="hero-kicker">Mini-App für Scrum-Teams</p>
-        <h1>Bessere Retros, weniger Vorbereitung.</h1>
-        <p class="hero-lead">RetroLos! schlägt dir ein passendes Format vor, sammelt die Karten deines Teams als Dateien und führt dich durch die Moderation – ganz ohne Server und ohne Login.</p>
+  <main id="inhalt">
+    <section class="hero container">
+      <h1>Wie segelt dein Team?</h1>
+      <div class="trip">
+        <div class="trip-field">
+          <label for="trip-title">Törn</label>
+          <input id="trip-title" type="text" maxlength="60" placeholder="z. B. Sprint 12" autocomplete="off">
+        </div>
+        <div class="trip-field">
+          <label for="trip-date">Datum</label>
+          <input id="trip-date" type="date">
+        </div>
       </div>
-      <svg class="hero-art" viewBox="0 0 300 260" aria-hidden="true" focusable="false">
-        <circle class="loop" cx="150" cy="130" r="104"/>
-        <g class="note">
-          <rect class="note-1" x="34" y="36" width="116" height="92" rx="10"/>
-          <path class="note-line" d="M54 66h74M54 86h60M54 106h68"/>
-        </g>
-        <g class="note">
-          <rect class="note-2" x="160" y="72" width="112" height="88" rx="10"/>
-          <path class="note-line" d="M178 100h72M178 120h52M178 140h64"/>
-        </g>
-        <g class="note">
-          <rect class="note-3" x="84" y="150" width="112" height="82" rx="10"/>
-          <path class="note-line" d="M102 178h70M102 198h50"/>
-        </g>
-        <path class="spark" d="M256 34l3.5 10.5L270 48l-10.5 3.5L256 62l-3.5-10.5L242 48l10.5-3.5z"/>
-        <path class="spark" d="M30 190l2.5 7.5L40 200l-7.5 2.5L30 210l-2.5-7.5L20 200l7.5-2.5z"/>
-      </svg>
+      <noscript><p class="notice">RetroLos! braucht JavaScript, um Karten zu speichern.</p></noscript>
     </section>
 
-    <section aria-labelledby="einstieg-titel">
-      <h2 id="einstieg-titel" class="visually-hidden">Wie möchtest du starten?</h2>
-      <div class="entry-grid">
-        <article class="entry-card entry-card-lead">
-          <span class="entry-icon" aria-hidden="true">🧭</span>
-          <h3>Ich bin Scrum Master</h3>
-          <p>Retro planen, Format wählen, Team einladen – und später alle Beiträge importieren und die Retro moderieren.</p>
-          <div class="button-row">
-            <a class="button button-primary" href="planen.html">Retro planen</a>
-            <a class="button button-secondary" href="moderieren.html">Beiträge importieren</a>
+    <section class="sea" aria-label="Segelboot">
+      <div class="container">
+        <div class="scene-host" id="scene"></div>
+        <p class="course" id="course" aria-live="polite">
+          <span class="course-label" id="course-label">Leinen los</span>
+          <span class="course-knots" id="course-knots">0 Knoten</span>
+        </p>
+      </div>
+    </section>
+
+    <section class="zones container" aria-label="Deine Karten">
+      <section class="zone" data-zone="wind" aria-labelledby="titel-wind">
+        <div class="zone-head">
+          <svg class="zone-icon" viewBox="0 0 32 32" aria-hidden="true" focusable="false"><path d="M4 11h15a4 4 0 1 0-4-4M4 17h21a4 4 0 1 1-4 4M4 23h10"/></svg>
+          <h2 id="titel-wind">Wind</h2>
+          <span class="zone-count" id="count-wind">0</span>
+        </div>
+        <p class="zone-question">Was treibt uns an?</p>
+        <ul class="zone-cards" id="cards-wind"></ul>
+        <form class="zone-add" data-zone="wind">
+          <label class="visually-hidden" for="neu-wind">Neue Karte für Wind</label>
+          <input id="neu-wind" type="text" maxlength="300" placeholder="Notiz hinzufügen" autocomplete="off">
+          <button type="submit" class="button button-icon" aria-label="Karte zu Wind hinzufügen">+</button>
+        </form>
+      </section>
+
+      <section class="zone" data-zone="anker" aria-labelledby="titel-anker">
+        <div class="zone-head">
+          <svg class="zone-icon" viewBox="0 0 32 32" aria-hidden="true" focusable="false"><circle cx="16" cy="6" r="3"/><path d="M16 9v19M10 14h12M5 19c1 6 6 9 11 9s10-3 11-9"/></svg>
+          <h2 id="titel-anker">Anker</h2>
+          <span class="zone-count" id="count-anker">0</span>
+        </div>
+        <p class="zone-question">Was bremst uns?</p>
+        <ul class="zone-cards" id="cards-anker"></ul>
+        <form class="zone-add" data-zone="anker">
+          <label class="visually-hidden" for="neu-anker">Neue Karte für Anker</label>
+          <input id="neu-anker" type="text" maxlength="300" placeholder="Notiz hinzufügen" autocomplete="off">
+          <button type="submit" class="button button-icon" aria-label="Karte zu Anker hinzufügen">+</button>
+        </form>
+      </section>
+
+      <section class="zone" data-zone="felsen" aria-labelledby="titel-felsen">
+        <div class="zone-head">
+          <svg class="zone-icon" viewBox="0 0 32 32" aria-hidden="true" focusable="false"><path d="M3 26l8-14 5 6 4-8 9 16z"/></svg>
+          <h2 id="titel-felsen">Felsen</h2>
+          <span class="zone-count" id="count-felsen">0</span>
+        </div>
+        <p class="zone-question">Welche Risiken sehen wir?</p>
+        <ul class="zone-cards" id="cards-felsen"></ul>
+        <form class="zone-add" data-zone="felsen">
+          <label class="visually-hidden" for="neu-felsen">Neue Karte für Felsen</label>
+          <input id="neu-felsen" type="text" maxlength="300" placeholder="Notiz hinzufügen" autocomplete="off">
+          <button type="submit" class="button button-icon" aria-label="Karte zu Felsen hinzufügen">+</button>
+        </form>
+      </section>
+
+      <section class="zone" data-zone="insel" aria-labelledby="titel-insel">
+        <div class="zone-head">
+          <svg class="zone-icon" viewBox="0 0 32 32" aria-hidden="true" focusable="false"><path d="M3 27c4-3 22-3 26 0M16 26c-1-6 0-12 3-16M19 10c-4-3-9-2-11 1M19 10c4-3 8-2 10 1M19 10c0-4 2-6 5-7"/></svg>
+          <h2 id="titel-insel">Insel</h2>
+          <span class="zone-count" id="count-insel">0</span>
+        </div>
+        <p class="zone-question">Wo wollen wir hin?</p>
+        <ul class="zone-cards" id="cards-insel"></ul>
+        <form class="zone-add" data-zone="insel">
+          <label class="visually-hidden" for="neu-insel">Neue Karte für Insel</label>
+          <input id="neu-insel" type="text" maxlength="300" placeholder="Notiz hinzufügen" autocomplete="off">
+          <button type="submit" class="button button-icon" aria-label="Karte zu Insel hinzufügen">+</button>
+        </form>
+      </section>
+    </section>
+
+    <section class="kurs" aria-labelledby="kurs-titel">
+      <div class="container">
+        <h2 id="kurs-titel">Kurs setzen</h2>
+        <p class="zone-question">Höchstens drei nächste Schritte.</p>
+        <ol class="actions" id="actions"></ol>
+        <form class="action-form" id="action-form">
+          <div class="action-field action-what">
+            <label for="action-what">Nächster Schritt</label>
+            <input id="action-what" type="text" maxlength="300" autocomplete="off" placeholder="z. B. Fokuszeit am Nachmittag">
           </div>
-        </article>
-        <article class="entry-card entry-card-guest">
-          <span class="entry-icon" aria-hidden="true">✍️</span>
-          <h3>Ich nehme an einer Retro teil</h3>
-          <p>Öffne den Einladungslink, den dir dein Scrum Master geschickt hat. Du landest direkt bei deinen Karten und speicherst sie am Schluss als Datei.</p>
-          <div class="button-row">
-            <a class="button button-secondary" href="teilnehmen.html">So nimmst du teil</a>
+          <div class="action-field">
+            <label for="action-due">Bis wann</label>
+            <input id="action-due" type="date">
           </div>
-        </article>
+          <button type="submit" class="button button-primary">Hinzufügen</button>
+        </form>
       </div>
     </section>
 
-    <details class="explainer">
-      <summary>Retro in 60 Sekunden erklärt</summary>
-      <div class="explainer-body">
-        <p>In Scrum arbeitet ein Team in <strong>Sprints</strong> von meist zwei Wochen. Am Ende jedes Sprints steht die <strong>Retrospektive</strong>, kurz Retro. Darin schaut das Team auf seine <strong>Zusammenarbeit</strong> zurück – nicht auf das Produkt.</p>
-        <p>Das Ziel sind <strong>1–3 konkrete Massnahmen</strong>, jede mit einer verantwortlichen Rolle und einem Termin. Eine Retro dauert meist 45–90 Minuten, der Scrum Master moderiert. Sie hat fünf Phasen:</p>
-        <ol class="phase-list">
-          <li><span><strong>Einstimmen</strong> – ein kurzer Check-in, damit alle ankommen.</span></li>
-          <li><span><strong>Sammeln</strong> – alle schreiben Karten zu den Leitfragen des gewählten Formats.</span></li>
-          <li><span><strong>Verstehen</strong> – Karten besprechen, Ähnliches gruppieren, Punkte vergeben.</span></li>
-          <li><span><strong>Entscheiden</strong> – aus den wichtigsten Themen Massnahmen festlegen.</span></li>
-          <li><span><strong>Abschliessen</strong> – kurzes Feedback: Wie hilfreich war die Retro?</span></li>
-        </ol>
-        <p>Ein <strong>Format</strong> gibt die Spalten und Leitfragen vor, zum Beispiel «Segelboot»: Was treibt uns an, was bremst uns? Wer das Format ab und zu wechselt, hält die Retro lebendig.</p>
-      </div>
-    </details>
-
-    <section class="section" aria-labelledby="ablauf-titel">
-      <h2 id="ablauf-titel">So läuft eine Retro mit RetroLos!</h2>
-      <p class="section-intro">Alle arbeiten auf ihrem eigenen Gerät. Ausgetauscht wird über einfache Textdateien in eurem Teams-Kanal – zeitversetzt, ohne Live-Verbindung.</p>
-      <ol class="steps">
-        <li>
-          <h3>Planen</h3>
-          <p>Du wählst Sprint, Zeit und Stimmung. RetroLos! empfiehlt ein Format, erstellt die Agenda und einen Einladungslink.</p>
-        </li>
-        <li>
-          <h3>Beiträge sammeln</h3>
-          <p>Dein Team öffnet den Link, schreibt Karten und speichert sie als <code>.md</code>-Datei im Teams-Ordner.</p>
-        </li>
-        <li>
-          <h3>Importieren und moderieren</h3>
-          <p>Du ziehst alle Dateien ins Board, teilst deinen Bildschirm und führst durch die fünf Phasen.</p>
-        </li>
-        <li>
-          <h3>Protokoll</h3>
-          <p>Am Ende speicherst du das Protokoll. Bei der nächsten Retro importierst du es wieder – so gehen Massnahmen nicht vergessen.</p>
-        </li>
-      </ol>
-    </section>
-
-    <section class="section panel" aria-labelledby="datenschutz-titel">
-      <h2 id="datenschutz-titel">Eure Daten bleiben bei euch</h2>
-      <ul class="privacy-list">
-        <li><span>Kein Server, kein Login, kein Tracking. RetroLos! läuft komplett in deinem Browser.</span></li>
-        <li><span>Beiträge sind standardmässig anonym. Ein Kürzel ist freiwillig.</span></li>
-        <li><span>Retro-Dateien gehören in euren Teams-Kanal oder Team-Ordner – nie ins Git-Repository, denn das ist öffentlich.</span></li>
-        <li><span>Ein Datenschutz-Wächter weist dich auf mögliche Kunden- oder Personendaten hin. Das ist ein Hinweis, kein vollständiger Schutz.</span></li>
-      </ul>
+    <section class="logbook container" aria-label="Logbuch">
+      <button type="button" class="button button-primary" id="save">Logbuch speichern (.md)</button>
+      <button type="button" class="button button-secondary" id="copy">Text kopieren</button>
+      <button type="button" class="button button-ghost" id="reset">Neu beginnen</button>
     </section>
   </main>
 
   <footer class="site-footer">
-    <div class="container">
-      <p>RetroLos! · Prototyp eines ZHAW-Teams am AXA-Hackathon 2026 · AXALos! Lösung 1 «Solo Workout»</p>
-      <p><a href="https://github.com/rexliz/axa-miniapp-retrolos">Quellcode und Dokumentation auf GitHub</a></p>
-    </div>
+    <p class="container">RetroLos! · Prototyp eines ZHAW-Teams am AXA-Hackathon 2026 · AXALos! Lösung 1 «Solo Workout»</p>
   </footer>
+
+  <div id="status" class="toast" role="status" aria-live="polite"></div>
 </body>
 </html>
