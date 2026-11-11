@@ -956,3 +956,86 @@ kbd {
     padding: 0;
   }
 }
+
+/* ---------- Rückblick und Abschluss ---------- */
+
+.review-panel {
+  margin-top: var(--space-5);
+}
+
+.review-panel .review-item .button {
+  min-height: 2.25rem;
+  font-size: var(--font-size-small);
+}
+
+.finish-area {
+  padding-top: var(--space-5);
+  border-top: var(--border);
+}
+
+.finish-area h4 {
+  font-size: var(--font-size-xl);
+}
+
+.finish-area .field-hint {
+  margin-top: var(--space-3);
+  font-size: var(--font-size-base);
+}
+
+.summary-preview {
+  margin-top: var(--space-4);
+}
+
+.summary-preview > summary {
+  cursor: pointer;
+  color: var(--color-accent);
+  font-weight: var(--font-weight-bold);
+  font-size: var(--font-size-base);
+}
+
+.summary-text {
+  margin: var(--space-3) 0 0;
+  padding: var(--space-4);
+  border-radius: var(--radius-small);
+  background: var(--color-surface-alt);
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  font-size: var(--font-size-small);
+}
+
+.danger-zone {
+  margin-top: var(--space-6);
+  padding: var(--space-4);
+  border: 2px dashed var(--color-danger);
+  border-radius: var(--radius);
+  font-size: var(--font-size-base);
+}
+
+/* Druckansicht des Protokolls: nur auf Papier sichtbar */
+.protocol-print {
+  display: none;
+}
+
+.protocol-print table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: var(--space-4);
+}
+
+.protocol-print th,
+.protocol-print td {
+  padding: var(--space-1) var(--space-2);
+  border: var(--border);
+  text-align: left;
+  vertical-align: top;
+}
+
+@media print {
+  body.is-printing-protocol main > :not(.protocol-print) {
+    display: none;
+  }
+
+  body.is-printing-protocol .protocol-print {
+    display: block;
+  }
+}

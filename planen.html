@@ -11,6 +11,8 @@
   <link rel="stylesheet" href="planen.css">
   <script src="config.js" defer></script>
   <script src="core-plan.js" defer></script>
+  <script src="core-markdown.js" defer></script>
+  <script src="core-privacy.js" defer></script>
   <script src="ui.js" defer></script>
   <script src="effects.js" defer></script>
   <script src="planen.js" defer></script>
@@ -59,6 +61,21 @@
     <noscript>
       <div class="notice"><p>Der Planungsassistent braucht JavaScript. Die Erklärungen auf der <a href="index.html">Startseite</a> funktionieren auch ohne.</p></div>
     </noscript>
+
+    <section class="panel plan-review" aria-labelledby="review-title">
+      <h2 id="review-title"><span class="step-badge" aria-hidden="true">↺</span>Letzte Retro <span class="optional">(optional)</span></h2>
+      <p class="section-intro">Hast du das Protokoll der letzten Retro? Importiere es – dann schaut ihr zuerst, was aus den Massnahmen geworden ist, und RetroLos! schlägt ein anderes Format vor als letztes Mal.</p>
+      <div class="button-row">
+        <button type="button" class="button button-secondary" id="protocol-pick"><span aria-hidden="true">📄</span> Protokoll importieren</button>
+      </div>
+      <input id="protocol-input" class="visually-hidden" type="file" accept=".md,.markdown,.txt,text/markdown,text/plain" tabindex="-1" aria-hidden="true">
+      <div class="notice" id="protocol-error" hidden><p id="protocol-error-text"></p></div>
+      <div class="review-box" id="review-box" hidden>
+        <p class="review-meta" id="review-meta"></p>
+        <ol class="review-list" id="review-list"></ol>
+        <button type="button" class="button button-ghost" id="review-clear">Rückblick entfernen</button>
+      </div>
+    </section>
 
     <form id="plan-form" class="plan-grid" novalidate>
       <section class="panel plan-step" aria-labelledby="schritt-1">
@@ -183,7 +200,10 @@
     <section class="panel next-step no-print" aria-labelledby="weiter-titel">
       <h2 id="weiter-titel">Und dann?</h2>
       <p>Sobald die Dateien deines Teams da sind, importierst du sie und moderierst die Retro Schritt für Schritt.</p>
-      <a class="button button-primary" href="moderieren.html">Zum Import und zur Moderation</a>
+      <div class="button-row">
+        <a class="button button-primary" href="moderieren.html">Zum Import und zur Moderation</a>
+        <button type="button" class="button button-danger" id="clear-all">Alle Daten in diesem Browser löschen</button>
+      </div>
     </section>
 
     <div id="status" class="toast" role="status" aria-live="polite"></div>

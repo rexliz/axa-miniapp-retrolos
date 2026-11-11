@@ -27,6 +27,7 @@
   const plan = ui.storage.get('plan', null);
   const planBoard = () => B.createBoard(plan ? {
     retroId: plan.retroId, format: plan.format, sprint: plan.sprint, date: plan.date, question: plan.question, agenda: plan.agenda,
+    review: (plan.review || []).map((r) => Object.assign({}, r)),
   } : {});
 
   let board = ui.storage.get('board', null);
@@ -42,6 +43,7 @@
     board.question = board.question || plan.question;
     board.sprint = plan.sprint || board.sprint;
     board.date = plan.date || board.date;
+    if (Array.isArray(plan.review) && plan.review.length) board.review = plan.review.map((r) => Object.assign({}, r));
   }
 
   const selected = new Set();
@@ -448,6 +450,7 @@
       ui.el('button', { type: 'button', class: 'button button-primary', onclick: saveEdit }, 'Speichern'),
       ui.el('button', { type: 'button', class: 'button button-ghost', onclick: render }, 'Abbrechen')));
     li.draggable = false;
+    ui.attachPrivacyHint(area);
     area.focus();
   }
 
@@ -523,6 +526,7 @@
         ui.el('label', { class: 'visually-hidden', for: id, text: 'Karte ergänzen in «' + col.name + '»' }),
         input,
         ui.el('button', { type: 'submit', class: 'button button-secondary' }, '+ Karte'));
+      ui.attachPrivacyHint(input);
       form.addEventListener('submit', (event) => {
         event.preventDefault();
         const card = B.addCard(board, col.key, input.value, { flagged: flag(input.value) });
@@ -664,6 +668,20 @@
       }, '→ Als Massnahme'))));
     if (!topics.length) list.append(ui.el('li', { class: 'mood-empty', text: 'Noch keine Karten auf dem Board.' }));
     if (!$('action-due').value) $('action-due').value = isoPlusDays(board.date, 14);
+    const review = board.review || [];
+    $('review-panel').hidden = review.length === 0;
+    const icons = { umgesetzt: '✅ umgesetzt', teilweise: '🟡 teilweise', 'nicht umgesetzt': '❌ nicht umgesetzt' };
+    $('board-review-list').replaceChildren(...review.map((r) => ui.el('li', { class: 'review-item' },
+      ui.el('p', { class: 'review-what' }, ui.el('strong', { text: r.what }), ' – ', icons[r.status] || 'noch nicht besprochen'),
+      r.status !== 'umgesetzt' ? ui.el('button', {
+        type: 'button',
+        class: 'button button-ghost no-print',
+        onclick: () => {
+          B.addAction(board, { what: r.what, who: r.who, due: isoPlusDays(board.date, 14) });
+          commit();
+          ui.announce('Massnahme wieder aufgenommen.');
+        },
+      }, '↻ Wieder aufnehmen') : null)));
     $('action-hint').hidden = board.actions.length <= 3;
     $('action-list').replaceChildren(...board.actions.map((a, i) => ui.el('li', { class: 'action-item' },
       ui.el('p', { class: 'action-what', text: (i + 1) + '. ' + a.what }),
@@ -734,6 +752,7 @@
       }
     });
     const stats = B.feedbackStats(board);
+    renderClosing();
     $('feedback-stats').textContent = stats.votes
       ? stats.votes + (stats.votes === 1 ? ' Stimme' : ' Stimmen') + ' · Durchschnitt ' + String(stats.average).replace('.', ',') + ' von 5'
       : 'Noch keine Stimmen.';
@@ -755,7 +774,64 @@
     save();
     if (effects) effects.confetti();
     ui.announce('Danke fürs Mitmachen! 🎉');
-    if (app.closing) app.closing.show();
+    $('finish-area').scrollIntoView({ behavior: motion() ? 'smooth' : 'auto', block: 'start' });
+  });
+
+  /* ---------- Protokoll, Teams, Druck, Löschen ---------- */
+
+  function renderClosing() {
+    $('summary-text').textContent = B.summaryText(board, config);
+  }
+
+  $('protocol-download').addEventListener('click', () => {
+    if (!board.retroId) {
+      ui.announce('Es gibt noch keine Retro auf dem Board.', 'warning');
+      return;
+    }
+    const file = md.writeProtocol(B.buildProtocol(board, config));
+    ui.download(file.filename, file.text);
+    if (board.format) ui.storage.set('letztesFormat', board.format);
+    ui.announce('Protokoll gespeichert: ' + file.filename + ' – jetzt in den Teams-Ordner legen.', 'success');
+  });
+
+  $('summary-copy').addEventListener('click', async () => {
+    const ok = await ui.copyText(B.summaryText(board, config));
+    ui.announce(ok ? 'Zusammenfassung kopiert – jetzt im Teams-Chat einfügen.' : 'Kopieren hat nicht geklappt – Text unter «Zusammenfassung ansehen» markieren.', ok ? 'success' : 'warning');
+  });
+
+  function renderPrint() {
+    const p = B.buildProtocol(board, config);
+    const f = format();
+    const stats = B.feedbackStats(board);
+    const table = (rows, statusLabel) => ui.el('table', null,
+      ui.el('thead', null, ui.el('tr', null, ['Was', 'Wer', 'Bis wann', statusLabel].map((h) => ui.el('th', { text: h })))),
+      ui.el('tbody', null, rows.map((a) => ui.el('tr', null, [a.what, a.who || '–', a.due ? core.formatDate(a.due) : '–', a.status].map((c) => ui.el('td', { text: c }))))));
+    $('protocol-print').replaceChildren(
+      ui.el('h2', { text: 'Retro-Protokoll «' + (board.sprint || board.retroId) + '»' }),
+      ui.el('p', { text: [f ? 'Format: ' + f.name : '', board.date ? 'Datum: ' + core.formatDate(board.date, { long: true }) : '', 'Beiträge: ' + p.contributions, board.retroId].filter(Boolean).join(' · ') }),
+      ui.el('h3', { text: 'Stimmung' }),
+      ui.el('p', { text: p.mood.map((m) => m.emoji + ' ' + m.count).join('   ') }),
+      ui.el('h3', { text: 'Top-Themen' }),
+      p.topics.length ? ui.el('ol', null, p.topics.map((t) => ui.el('li', { text: t.text + ' – ' + t.points + (t.points === 1 ? ' Punkt' : ' Punkte') + (t.column ? ' (' + t.column + ')' : '') }))) : ui.el('p', { text: '–' }),
+      ui.el('h3', { text: 'Massnahmen' }),
+      p.actions.length ? table(p.actions, 'Status') : ui.el('p', { text: '–' }),
+      p.review.length ? ui.el('h3', { text: 'Rückblick auf die letzten Massnahmen' }) : null,
+      p.review.length ? table(p.review, 'Status') : null,
+      ui.el('h3', { text: 'Feedback zur Retro' }),
+      ui.el('p', { text: stats.votes ? 'Ø ' + String(stats.average).replace('.', ',') + ' von 5 (' + stats.votes + ' Stimmen)' : 'Keine Stimmen.' }));
+  }
+
+  $('print-button').addEventListener('click', () => {
+    renderPrint();
+    document.body.classList.add('is-printing-protocol');
+    window.print();
+  });
+  window.addEventListener('afterprint', () => document.body.classList.remove('is-printing-protocol'));
+
+  $('clear-all').addEventListener('click', () => {
+    if (!window.confirm('Alle RetroLos!-Daten in diesem Browser löschen (Planung, Board, Entwürfe)? Hast du das Protokoll gespeichert?')) return;
+    ui.storage.clearAll();
+    window.location.href = 'index.html';
   });
 
   /* ---------- Timer ---------- */
@@ -863,7 +939,10 @@
     if (board.phase === 0) renderCheckin();
     if (board.phase === 1 || board.phase === 2) renderBoard();
     if (board.phase === 3) renderDecide();
-    if (board.phase === 4) renderFeedback();
+    if (board.phase === 4) {
+      renderFeedback();
+      renderClosing();
+    }
   }
 
   function commit() {

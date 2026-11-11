@@ -12,6 +12,7 @@
   <script src="config.js" defer></script>
   <script src="core-plan.js" defer></script>
   <script src="core-markdown.js" defer></script>
+  <script src="core-privacy.js" defer></script>
   <script src="ui.js" defer></script>
   <script src="effects.js" defer></script>
   <script src="teilnehmen.js" defer></script>
@@ -138,6 +139,7 @@
     <dialog class="preview-dialog" id="preview-dialog" aria-labelledby="preview-title">
       <h2 id="preview-title">Vorschau deiner Datei</h2>
       <p>Das gibst du weiter. Prüfe kurz: keine Namen, keine Kunden- oder Personendaten.</p>
+      <div class="notice" id="preview-warning" hidden><p id="preview-warning-text"></p></div>
       <p class="preview-filename">Dateiname: <code id="preview-filename"></code></p>
       <pre class="preview-text" id="preview-text" tabindex="0"></pre>
       <div class="button-row">
