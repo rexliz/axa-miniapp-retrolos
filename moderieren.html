@@ -13,6 +13,7 @@
   <script src="core-plan.js" defer></script>
   <script src="core-markdown.js" defer></script>
   <script src="core-board.js" defer></script>
+  <script src="core-privacy.js" defer></script>
   <script src="ui.js" defer></script>
   <script src="effects.js" defer></script>
   <script src="moderieren.js" defer></script>
@@ -170,6 +171,10 @@
           <section class="decide-topics" aria-labelledby="topics-title">
             <h4 id="topics-title">Top-Themen nach Punkten</h4>
             <ol class="topic-list" id="topic-list"></ol>
+            <div class="review-panel" id="review-panel" hidden>
+              <h4>Aus der letzten Retro</h4>
+              <ol class="review-list" id="board-review-list"></ol>
+            </div>
           </section>
           <section class="decide-actions" aria-labelledby="actions-title">
             <h4 id="actions-title">Massnahmen</h4>
@@ -212,9 +217,27 @@
             <button type="button" class="button button-primary button-large" id="finish"><span aria-hidden="true">🎉</span> Retro abschliessen</button>
           </div>
         </div>
-        <div class="finish-area" id="finish-area" hidden></div>
+        <section class="finish-area" id="finish-area" aria-labelledby="finish-title">
+          <h4 id="finish-title">Protokoll und Abschluss</h4>
+          <div class="button-row">
+            <button type="button" class="button button-primary" id="protocol-download"><span aria-hidden="true">📄</span> Retro-Protokoll als .md speichern</button>
+            <button type="button" class="button button-secondary" id="summary-copy"><span aria-hidden="true">💬</span> Für Teams-Chat kopieren</button>
+            <button type="button" class="button button-secondary" id="print-button"><span aria-hidden="true">🖨️</span> Druckansicht</button>
+          </div>
+          <p class="field-hint">Lege das Protokoll in euren Teams-Ordner. Bei der nächsten Retro importierst du es auf der Seite «Planen» wieder – so gehen offene Massnahmen nicht vergessen.</p>
+          <details class="summary-preview">
+            <summary>Zusammenfassung für Teams ansehen</summary>
+            <pre class="summary-text" id="summary-text"></pre>
+          </details>
+          <div class="danger-zone no-print">
+            <p><strong>Fertig?</strong> Lösche alle RetroLos!-Daten in diesem Browser (Planung, Board, Entwürfe). Gespeicherte Dateien bleiben erhalten.</p>
+            <button type="button" class="button button-danger" id="clear-all">Alle Daten in diesem Browser löschen</button>
+          </div>
+        </section>
       </div>
     </section>
+
+    <section class="protocol-print" id="protocol-print" aria-hidden="true"></section>
 
     <div id="status" class="toast" role="status" aria-live="polite"></div>
   </main>

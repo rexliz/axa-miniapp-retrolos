@@ -436,3 +436,30 @@
     print-color-adjust: exact;
   }
 }
+
+/* ---------- Letzte Retro ---------- */
+
+.plan-review {
+  margin-bottom: var(--space-5);
+}
+
+.plan-review h2 {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--space-1);
+}
+
+.review-box {
+  margin-top: var(--space-4);
+}
+
+.review-meta {
+  font-weight: 600;
+}
+
+@media print {
+  .plan-review {
+    display: none;
+  }
+}

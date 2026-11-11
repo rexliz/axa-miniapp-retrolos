@@ -73,7 +73,8 @@
   const saved = ui.storage.get('plan', null);
   const state = Object.assign({}, defaults, saved && saved.input ? saved.input : {});
   if (!core.findFormat(config, state.formatChoice)) state.formatChoice = '';
-  const lastFormat = ui.storage.get('letztesFormat', '');
+  let lastFormat = ui.storage.get('letztesFormat', '');
+  if (!Array.isArray(state.review)) state.review = [];
 
   /* ---------- Auswahl-Elemente aus der Konfiguration ---------- */
 
@@ -228,6 +229,7 @@
       format: info.format.key,
       agenda,
       question: state.question,
+      review: state.review,
       savedAt: new Date().toISOString(),
     });
   }
@@ -311,7 +313,90 @@
 
   els.agendaPrint.addEventListener('click', () => window.print());
 
+  /* ---------- Protokoll der letzten Retro ---------- */
+
+  const STATUS = [
+    { value: 'umgesetzt', label: 'Ja' },
+    { value: 'teilweise', label: 'Teilweise' },
+    { value: 'nicht umgesetzt', label: 'Nein' },
+  ];
+
+  function renderReview() {
+    const box = $('review-box');
+    box.hidden = state.review.length === 0;
+    if (!state.review.length) return;
+    const src = state.reviewSource || {};
+    $('review-meta').textContent = 'Aus der Retro «' + (src.sprint || src.retroId || '–') + '»'
+      + (src.date ? ' vom ' + core.formatDate(src.date) : '') + ': ' + state.review.length
+      + (state.review.length === 1 ? ' offene Massnahme' : ' offene Massnahmen') + '. Umgesetzt?';
+    $('review-list').replaceChildren(...state.review.map((item, i) => {
+      const group = ui.el('div', { class: 'choices' }, STATUS.map((s) => {
+        const input = ui.el('input', { type: 'radio', name: 'review-' + i, value: s.value, checked: item.status === s.value });
+        input.addEventListener('change', () => {
+          item.status = s.value;
+          update();
+        });
+        return ui.el('label', { class: 'choice' }, input, ui.el('span', null, s.label));
+      }));
+      return ui.el('li', { class: 'review-item' },
+        ui.el('p', { class: 'review-what' }, ui.el('strong', { text: item.what })),
+        ui.el('p', { class: 'review-meta-line', text: 'Wer: ' + (item.who || '–') + ' · Bis: ' + (item.due ? core.formatDate(item.due) : '–') }),
+        ui.el('fieldset', { class: 'choice-group review-choice' }, ui.el('legend', { class: 'visually-hidden', text: 'Umgesetzt: ' + item.what }), group));
+    }));
+  }
+
+  const protocolInput = $('protocol-input');
+  $('protocol-pick').addEventListener('click', () => protocolInput.click());
+  protocolInput.addEventListener('change', async () => {
+    const file = protocolInput.files && protocolInput.files[0];
+    protocolInput.value = '';
+    if (!file) return;
+    let text = '';
+    try {
+      text = await file.text();
+    } catch (e) {
+      text = '';
+    }
+    const parsed = app.markdown ? app.markdown.parseProtocol(text) : { ok: false, error: 'Lesen nicht möglich.' };
+    $('protocol-error').hidden = parsed.ok;
+    if (!parsed.ok) {
+      $('protocol-error-text').textContent = file.name + ': ' + parsed.error;
+      return;
+    }
+    const open = app.markdown.openActions(parsed);
+    state.review = open.map((a) => ({ what: a.what, who: a.who, due: a.due, status: '' }));
+    state.reviewSource = { retroId: parsed.meta.retroId, sprint: parsed.meta.sprint, date: parsed.meta.date, format: parsed.meta.format };
+    if (core.findFormat(config, parsed.meta.format)) {
+      lastFormat = parsed.meta.format;
+      ui.storage.set('letztesFormat', lastFormat);
+    }
+    const next = /^(.*?)(\d+)\s*$/.exec(parsed.meta.sprint || '');
+    if (!state.sprint.trim() && next) {
+      state.sprint = next[1] + (Number(next[2]) + 1);
+      els.sprint.value = state.sprint;
+    }
+    renderReview();
+    update();
+    ui.announce(open.length
+      ? 'Protokoll importiert: ' + open.length + (open.length === 1 ? ' offene Massnahme.' : ' offene Massnahmen.')
+      : 'Protokoll importiert – keine offenen Massnahmen.', 'success');
+  });
+  $('review-clear').addEventListener('click', () => {
+    state.review = [];
+    state.reviewSource = null;
+    renderReview();
+    update();
+  });
+
+  $('clear-all').addEventListener('click', () => {
+    if (!window.confirm('Alle RetroLos!-Daten in diesem Browser löschen (Planung, Board, Entwürfe)? Gespeicherte Dateien bleiben erhalten.')) return;
+    ui.storage.clearAll();
+    window.location.href = 'index.html';
+  });
+
+  ui.attachPrivacyHint(els.sprint);
   ui.wireCopyButtons(document);
   if (effects) effects.showFace(els.dice, 5);
+  renderReview();
   update();
 })();

@@ -132,6 +132,31 @@
     });
   }
 
+  // Datenschutz-Wächter: zeigt unter einem Eingabefeld einen freundlichen,
+  // nicht blockierenden Hinweis, wenn der Text nach Personendaten aussieht.
+  function attachPrivacyHint(field) {
+    const privacy = root.RetroLos && root.RetroLos.privacy;
+    if (!privacy || !field) return { run() {} };
+    const hint = el('p', { class: 'privacy-hint', hidden: true });
+    if (field.id) {
+      hint.id = field.id + '-datenschutz';
+      field.setAttribute('aria-describedby', ((field.getAttribute('aria-describedby') || '') + ' ' + hint.id).trim());
+    }
+    field.insertAdjacentElement('afterend', hint);
+    let timer = null;
+    const run = () => {
+      const hits = privacy.check(field.value);
+      hint.hidden = hits.length === 0;
+      hint.textContent = hits.length ? '🛡️ ' + privacy.describe(hits) : '';
+    };
+    field.addEventListener('input', () => {
+      clearTimeout(timer);
+      timer = setTimeout(run, 250);
+    });
+    run();
+    return { run, hint };
+  }
+
   root.RetroLos = root.RetroLos || {};
-  root.RetroLos.ui = { storage, copyText, download, announce, el, motionOk, wireCopyButtons };
+  root.RetroLos.ui = { storage, copyText, download, announce, el, motionOk, wireCopyButtons, attachPrivacyHint };
 })(globalThis);

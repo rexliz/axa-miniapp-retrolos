@@ -118,9 +118,11 @@
   function cardItem(column, index) {
     const text = state.cards[column.key][index];
     const li = ui.el('li', { class: 'note-card' });
+    const hits = app.privacy ? app.privacy.check(text) : [];
     const view = () => {
       li.replaceChildren(
         ui.el('p', { class: 'note-text', text }),
+        hits.length ? ui.el('p', { class: 'privacy-hint', text: '🛡️ ' + app.privacy.describe(hits) }) : null,
         ui.el('div', { class: 'note-actions' },
           ui.el('button', { type: 'button', class: 'button button-ghost', onclick: edit, 'aria-label': 'Karte bearbeiten: ' + text.slice(0, 40) }, 'Bearbeiten'),
           ui.el('button', { type: 'button', class: 'button button-ghost', onclick: remove, 'aria-label': 'Karte löschen: ' + text.slice(0, 40) }, 'Löschen')));
@@ -158,6 +160,7 @@
       li.replaceChildren(area, ui.el('div', { class: 'note-actions' },
         ui.el('button', { type: 'button', class: 'button button-secondary', onclick: save }, 'Speichern'),
         ui.el('button', { type: 'button', class: 'button button-ghost', onclick: () => renderColumn(column) }, 'Abbrechen')));
+      ui.attachPrivacyHint(area);
       area.focus();
     }
     view();
@@ -177,6 +180,7 @@
       ui.el('label', { class: 'visually-hidden', for: id, text: 'Neue Karte für «' + column.name + '»' }),
       input,
       ui.el('button', { type: 'submit', class: 'button button-secondary' }, '+ Karte hinzufügen'));
+    const guard = ui.attachPrivacyHint(input);
     form.addEventListener('submit', (event) => {
       event.preventDefault();
       const text = md.cleanText(input.value);
@@ -187,6 +191,7 @@
       }
       state.cards[column.key].push(text);
       input.value = '';
+      guard.run();
       renderColumn(column);
       changed();
       input.focus();
@@ -270,6 +275,13 @@
       suffix: state.suffix,
       cards: state.cards,
     }, config);
+    const flagged = app.privacy
+      ? Object.values(state.cards).flat().filter((t) => app.privacy.check(t).length)
+      : [];
+    $('preview-warning').hidden = flagged.length === 0;
+    $('preview-warning-text').textContent = flagged.length
+      ? '🛡️ ' + app.privacy.MESSAGE + ' Betroffen: «' + flagged.map((t) => t.slice(0, 50)).join('», «') + '». Du kannst trotzdem speichern – besser vorher anpassen.'
+      : '';
     $('preview-filename').textContent = pending.filename;
     $('preview-text').textContent = pending.text;
     if (typeof dialog.showModal === 'function') dialog.showModal();

@@ -33,7 +33,7 @@
       cards: [],
       contributions: [],
       actions: [],
-      review: [],
+      review: Array.isArray(o.review) ? o.review : [],
       feedback: { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 },
       phase: 0,
       showInitials: false,
@@ -309,7 +309,71 @@
     return { votes, average: votes ? Math.round((sum / votes) * 10) / 10 : 0 };
   }
 
+  /* ---------- Protokoll und Zusammenfassung ---------- */
+
+  const REVIEW_LABELS = { umgesetzt: 'umgesetzt', teilweise: 'teilweise', 'nicht umgesetzt': 'nicht umgesetzt' };
+
+  // Daten für md.writeProtocol(). Top-Themen: alle Karten mit Punkten,
+  // sonst die ersten fünf.
+  function buildProtocol(board, config) {
+    const all = topTopics(board, config, board.cards.length || 1);
+    const voted = all.filter((t) => t.points > 0);
+    const topics = (voted.length ? voted : all.slice(0, 5)).map((t) => ({ points: t.points, text: t.text, column: t.column }));
+    return {
+      retroId: board.retroId,
+      sprint: board.sprint,
+      format: board.format,
+      date: board.date,
+      contributions: board.contributions.length,
+      mood: weatherCounts(board, config).map((w) => ({ emoji: w.emoji, count: w.count })),
+      topics,
+      actions: board.actions.map((a) => ({ what: a.what, who: a.who, due: a.due, status: a.status || 'offen' })),
+      review: (board.review || [])
+        .filter((r) => REVIEW_LABELS[r.status])
+        .map((r) => ({ what: r.what, who: r.who, due: r.due, status: r.status })),
+      feedback: Object.assign({}, board.feedback),
+    };
+  }
+
+  function formatDay(iso) {
+    const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(iso || '');
+    if (!m) return iso || '';
+    const day = new Date(Date.UTC(+m[1], +m[2] - 1, +m[3])).getUTCDay();
+    return ['So', 'Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa'][day] + ', ' + m[3] + '.' + m[2] + '.' + m[1];
+  }
+
+  // Kompakte Zusammenfassung zum Einfügen in den Teams-Chat.
+  function summaryText(board, config) {
+    const format = findFormat(config, board.format);
+    const p = buildProtocol(board, config);
+    const stats = feedbackStats(board);
+    const lines = [];
+    lines.push('🔁 Retro «' + (board.sprint || board.retroId) + '»' + (board.date ? ' – ' + formatDay(board.date) : '') + (format ? ' · Format: ' + format.name : ''));
+    lines.push('Stimmung: ' + p.mood.map((m) => m.emoji + ' ' + m.count).join(' · ') + ' (' + p.contributions + (p.contributions === 1 ? ' Beitrag)' : ' Beiträge)'));
+    lines.push('');
+    lines.push('Top-Themen:');
+    if (p.topics.length) p.topics.slice(0, 3).forEach((t, i) => lines.push((i + 1) + '. ' + t.text + ' (' + t.points + (t.points === 1 ? ' Punkt)' : ' Punkte)')));
+    else lines.push('– keine –');
+    lines.push('');
+    lines.push('Massnahmen:');
+    if (p.actions.length) p.actions.forEach((a) => lines.push('• ' + a.what + (a.who ? ' – ' + a.who : '') + (a.due ? ', bis ' + formatDay(a.due) : '')));
+    else lines.push('– keine –');
+    if (p.review.length) {
+      lines.push('');
+      lines.push('Rückblick letzte Retro: ' + p.review.map((r) => r.what + ' (' + r.status + ')').join('; '));
+    }
+    if (stats.votes) {
+      lines.push('');
+      lines.push('Feedback zur Retro: Ø ' + String(stats.average).replace('.', ',') + ' von 5 (' + stats.votes + (stats.votes === 1 ? ' Stimme)' : ' Stimmen)'));
+    }
+    lines.push('');
+    lines.push('Danke fürs Mitmachen! 🙌');
+    return lines.join('\n');
+  }
+
   return {
+    buildProtocol,
+    summaryText,
     createBoard,
     columnsFor,
     columnName,
