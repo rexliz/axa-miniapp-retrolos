@@ -6,13 +6,13 @@
   <meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'self'; form-action 'self'; object-src 'none'">
   <meta name="description" content="RetroLos! – deine Mini-Retro: Format wählen, Notizen sammeln, bis zu drei nächste Schritte festlegen.">
   <title>RetroLos! – Mini-Retro</title>
-  <link rel="icon" href="favicon.svg" type="image/svg+xml">
-  <link rel="stylesheet" href="styles.css">
-  <script src="core-retro.js" defer></script>
-  <script src="core-privacy.js" defer></script>
-  <script src="ui.js" defer></script>
-  <script src="effects.js" defer></script>
-  <script src="app.js" defer></script>
+  <link rel="icon" href="favicon.svg?v=5" type="image/svg+xml">
+  <link rel="stylesheet" href="styles.css?v=5">
+  <script src="core-retro.js?v=5" defer></script>
+  <script src="core-privacy.js?v=5" defer></script>
+  <script src="ui.js?v=5" defer></script>
+  <script src="effects.js?v=5" defer></script>
+  <script src="app.js?v=5" defer></script>
 </head>
 <body>
   <a class="skip-link" href="#inhalt">Zum Inhalt springen</a>
@@ -31,10 +31,25 @@
   <main id="inhalt">
     <section class="hero container">
       <h1>Wie lief euer Sprint?</h1>
+      <p class="print-title" id="print-title"></p>
       <div class="trip">
         <div class="trip-field">
           <label for="format">Format</label>
-          <select id="format"></select>
+          <select id="format">
+            <option value="segelboot" selected>⛵ Segelboot</option>
+            <option value="ampel">🚦 Ampel</option>
+            <option value="heissluftballon">🎈 Heissluftballon</option>
+            <option value="mad-sad-glad">😤 Mad – Sad – Glad</option>
+            <option value="start-stop-continue">⭐ Start – Stop – Continue</option>
+            <option value="zombie-scrum">🧟 Zombie-Scrum</option>
+            <option value="kill-one-thing">🗑️ Kill one thing</option>
+            <option value="zauberstab">🪄 Zauberstab</option>
+            <option value="sprint-awards">🏆 Sprint Awards</option>
+            <option value="sherlock">🕵️ Sherlock Retro</option>
+            <option value="film">🎬 Unser Sprint als Film</option>
+            <option value="sterne">🌟 1 Stern / 5 Sterne</option>
+            <option value="breaking-news">📰 Breaking News</option>
+          </select>
         </div>
         <div class="trip-field">
           <label for="trip-title">Sprint</label>
@@ -81,7 +96,8 @@
     </section>
 
     <section class="logbook container" aria-label="Logbuch">
-      <button type="button" class="button button-primary" id="save">Logbuch speichern (.md)</button>
+      <button type="button" class="button button-primary" id="save">Als .md speichern</button>
+      <button type="button" class="button button-primary" id="pdf">Als PDF speichern</button>
       <button type="button" class="button button-secondary" id="copy">Text kopieren</button>
       <button type="button" class="button button-ghost" id="reset">Neu beginnen</button>
     </section>
