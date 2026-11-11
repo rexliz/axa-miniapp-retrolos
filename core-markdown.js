@@ -288,14 +288,21 @@
       : [];
   }
 
-  function parseContribution(text, config) {
+  // targetFormat (optional): Spalten eines anderen Formats, z. B. des Boards.
+  function parseContribution(text, config, targetFormat) {
     const fm = parseFrontmatter(text);
     const problem = checkHeader(fm, 'beitrag');
     if (problem) return fail(problem);
     const d = fm.data;
     const warnings = fm.warnings.concat(versionWarning(d));
-    const format = findFormat(config, String(d.format || ''));
-    if (!format) warnings.push('Das Format «' + (d.format || '–') + '» kennt diese App nicht – die Karten landen in «Sonstiges».');
+    const own = findFormat(config, String(d.format || ''));
+    const target = targetFormat ? findFormat(config, targetFormat) : null;
+    const format = target || own;
+    if (target && own && target.key !== own.key) {
+      warnings.push('Die Datei nutzt das Format «' + own.name + '», das Board «' + target.name + '» – die Karten wurden nach Spaltennamen zugeordnet.');
+    } else if (!format) {
+      warnings.push('Das Format «' + (d.format || '–') + '» kennt diese App nicht – die Karten landen in «Sonstiges».');
+    }
     const mapped = mapSections(parseSections(fm.body), format, config);
     const weather = String(d.wetter || '');
     const cardCount = Object.values(mapped.cards).reduce((s, list) => s + list.length, 0) + mapped.other.length;
