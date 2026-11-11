@@ -1,7 +1,7 @@
 ---
 # Steckbrief für die Mini-App-Liste (AXALos!)
 name: "RetroLos!"
-zweck: "Persönliche Retro im Format Segelboot (Wind, Anker, Felsen, Insel) mit bis zu drei nächsten Schritten und Export als Markdown."
+zweck: "Persönliche Mini-Retro: Format wählen (13 Formate, Standard Segelboot), Notizen sammeln, bis zu drei nächste Schritte, Export als Markdown."
 zielgruppe: "Mitarbeitende, die allein eine Retro machen (Single-User)"
 owner: "ZHAW-Team – Owner-Person: TODO (noch offen)"
 weg: "Lösung 1 – Solo Workout"
@@ -20,7 +20,7 @@ stand: 2026-11-12
 | | |
 |---|---|
 | **Name** | RetroLos! |
-| **Zweck** | Persönliche Retro im Format Segelboot mit bis zu drei nächsten Schritten und Export als Markdown |
+| **Zweck** | Persönliche Mini-Retro: Format wählen (13 Formate, Standard Segelboot), Notizen sammeln, bis zu drei nächste Schritte, Export als Markdown |
 | **Zielgruppe** | Mitarbeitende, die allein eine Retro machen (Single-User) |
 | **Owner** | ZHAW-Team – Owner-Person: **TODO (noch offen)** |
 | **Weg** | Lösung 1 – Solo Workout |
