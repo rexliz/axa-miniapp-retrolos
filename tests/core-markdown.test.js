@@ -69,11 +69,11 @@ test('Import-Regel: unbekannte Spalten landen in «Sonstiges»', () => {
 });
 
 test('Import-Regel: unbekanntes Format → alles in «Sonstiges» mit Hinweis', () => {
-  const text = '---\nretrolos: 1\ntyp: beitrag\nretro_id: R-1\nformat: zeitmaschine\n---\n## Gestern\n- A\n';
+  const text = '---\nretrolos: 1\ntyp: beitrag\nretro_id: R-1\nformat: gibt-es-nicht-xyz\n---\n## Gestern\n- A\n';
   const parsed = md.parseContribution(text, config);
   assert.equal(parsed.ok, true);
   assert.deepEqual(parsed.other, [{ text: 'A', origin: 'Gestern' }]);
-  assert.match(parsed.warnings.join(' '), /zeitmaschine/);
+  assert.match(parsed.warnings.join(' '), /gibt-es-nicht-xyz/);
 });
 
 test('Import-Regel: kaputte oder fremde Dateien liefern eine verständliche Meldung statt Absturz', () => {
