@@ -38,6 +38,7 @@
   --color-sand: #f2d48f;
   --color-rock: #6b7488;
   --color-sail: #ffffff;
+  --color-palm: #2f8a4a;
   --color-shadow: rgb(20 33 61 / 0.1);
 
   /* Schrift */
@@ -110,6 +111,7 @@
     --color-sand: #8a7445;
     --color-rock: #8d97ab;
     --color-sail: #e8edf7;
+    --color-palm: #5fbf7a;
     --color-shadow: rgb(0 0 0 / 0.35);
   }
 }
@@ -1007,6 +1009,253 @@ textarea:focus-visible {
 @media (min-width: 40rem) {
   .field-grid {
     grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* Kartenfarben pro Spalte (Teilnehmen und Board) */
+.tone-1 {
+  --note-color: var(--color-note-1);
+}
+
+.tone-2 {
+  --note-color: var(--color-note-2);
+}
+
+.tone-3 {
+  --note-color: var(--color-note-3);
+}
+
+.tone-4 {
+  --note-color: var(--color-note-4);
+}
+
+.tone-5 {
+  --note-color: var(--color-note-5);
+}
+
+/* ==========================================================================
+   Effekte: Konfetti und Segelboot-Szene (Teilnehmen und Moderieren)
+   ========================================================================== */
+
+.confetti-canvas {
+  position: fixed;
+  inset: 0;
+  z-index: 30;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+.scene-host {
+  margin-bottom: var(--space-5);
+}
+
+.scene {
+  display: block;
+  width: 100%;
+  height: auto;
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+
+.scene-sky {
+  fill: var(--color-sky);
+}
+
+.scene-sun {
+  fill: var(--color-highlight);
+}
+
+.scene-cloud {
+  fill: var(--color-surface);
+  opacity: 0.85;
+  animation: cloud-drift 26s linear infinite alternate;
+}
+
+.scene-cloud-slow {
+  animation-duration: 38s;
+}
+
+.scene-sand {
+  fill: var(--color-sand);
+}
+
+.scene-trunk {
+  fill: none;
+  stroke: var(--color-rock);
+  stroke-width: 6;
+  stroke-linecap: round;
+}
+
+.scene-leaf {
+  fill: var(--color-palm);
+}
+
+.scene-island-flag {
+  fill: var(--color-danger);
+  stroke: var(--color-text);
+  stroke-width: 2;
+  opacity: 0;
+  transform-box: fill-box;
+  transform-origin: left bottom;
+  transform: scaleY(0);
+  transition: transform var(--motion-slow) var(--motion-bounce), opacity var(--motion-base);
+}
+
+.scene-island-flag.is-visible {
+  opacity: 1;
+  transform: scaleY(1);
+}
+
+.scene-rock {
+  fill: var(--color-rock);
+  opacity: 0;
+  transform-box: fill-box;
+  transform-origin: center bottom;
+  transform: translateY(14px);
+  transition: transform var(--motion-slow) var(--motion-bounce), opacity var(--motion-base);
+}
+
+.scene-rock.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.scene-wave-back {
+  fill: var(--color-sea-deep);
+  animation: wave-shift 7s linear infinite;
+}
+
+.scene-wave-front {
+  fill: var(--color-sea);
+  animation: wave-shift 5s linear infinite reverse;
+}
+
+.scene-boat {
+  transform: translateX(var(--boat-x, 0px));
+  transition: transform calc(var(--motion-slow) * 2) var(--motion-ease);
+}
+
+.scene-boat-bob {
+  animation: boat-bob 3.2s ease-in-out infinite;
+  transform-box: fill-box;
+  transform-origin: center bottom;
+}
+
+.scene-hull {
+  fill: var(--color-accent);
+}
+
+.scene-mast {
+  stroke: var(--color-text);
+  stroke-width: 3;
+}
+
+.scene-sail {
+  fill: var(--color-sail);
+  stroke: var(--color-accent);
+  stroke-width: 2;
+  stroke-linejoin: round;
+}
+
+.scene-flag {
+  fill: var(--color-highlight);
+}
+
+.scene-anchor {
+  opacity: 0;
+  transition: opacity var(--motion-base);
+}
+
+.scene-boat.is-anchored .scene-anchor {
+  opacity: 1;
+}
+
+.scene-rope,
+.scene-anchor-shape {
+  fill: none;
+  stroke: var(--color-text);
+  stroke-width: 2.5;
+  stroke-linecap: round;
+}
+
+.scene-wind path {
+  fill: none;
+  stroke: var(--color-surface);
+  stroke-width: 3;
+  stroke-linecap: round;
+  stroke-dasharray: 30 70;
+  opacity: 0;
+}
+
+.scene-boat.has-wind .scene-wind path {
+  opacity: 0.9;
+  animation: wind-blow 1.6s linear infinite;
+}
+
+.scene-boat.is-gust .scene-sail {
+  animation: sail-gust var(--motion-slow) var(--motion-bounce);
+  transform-box: fill-box;
+  transform-origin: left bottom;
+}
+
+.scene-caption {
+  margin: var(--space-2) 0 0;
+  color: var(--color-text-muted);
+  font-size: var(--font-size-small);
+}
+
+@keyframes wave-shift {
+  from {
+    transform: translateX(0);
+  }
+
+  to {
+    transform: translateX(-80px);
+  }
+}
+
+@keyframes boat-bob {
+  0%,
+  100% {
+    transform: translateY(0) rotate(-1.5deg);
+  }
+
+  50% {
+    transform: translateY(3px) rotate(1.5deg);
+  }
+}
+
+@keyframes cloud-drift {
+  to {
+    transform: translateX(40px);
+  }
+}
+
+@keyframes wind-blow {
+  from {
+    stroke-dashoffset: 100;
+  }
+
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+@keyframes sail-gust {
+  50% {
+    transform: scaleX(1.12);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .scene-cloud,
+  .scene-wave-back,
+  .scene-wave-front,
+  .scene-boat-bob,
+  .scene-boat.has-wind .scene-wind path,
+  .scene-boat.is-gust .scene-sail {
+    animation: none;
   }
 }
 
