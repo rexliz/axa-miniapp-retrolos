@@ -9,10 +9,21 @@ JavaScript, no build step**, deployed to GitHub Pages. The repository root *is*
 the website: what is in git is byte-for-byte what the browser receives, with
 nothing between source and output.
 
-**There is no website here yet.** This repository holds the conventions and the
-deploy pipeline; the HTML, CSS, and JS files are yours to create.
+**Dieses Repository ist die Mini-App «RetroLos!»** (AXA-Hackathon, Plattform
+«AXALos!», Lösung 1 «Solo Workout»). Sie hilft Scrum Mastern, Retrospektiven zu
+planen, die Karten des Teams zeitversetzt über `.md`-Dateien zu sammeln, die
+Retro per Bildschirm-Teilen zu moderieren und ein Protokoll zu erzeugen.
 
-Purpose beyond that, target audience, non-goals: TODO: Human clarification needed.
+- **Zielgruppe:** Scrum Master und Scrum-Teams bei AXA, auch Scrum-Neulinge.
+- **Nicht-Ziele:** Server, Datenbank, Login, Live-Synchronisation, Schreiben
+  ins Repo aus dem Browser, KI-Aufrufe, externe Dienste, Tracking.
+- **Daten:** keine Kunden- oder Personendaten. Eingaben bleiben im Browser
+  (`localStorage`) und in `.md`-Dateien, die das Team selbst ablegt.
+  **Retro-Dateien gehören nie ins Repository** (`.gitignore`: `retro-*.md`,
+  `retros/`; Ausnahme `docs/beispiele/`).
+- Dateiformat: [docs/dateiformat.md](docs/dateiformat.md) · Entscheide:
+  [docs/entscheidungen.md](docs/entscheidungen.md) · Template-Lücken:
+  [docs/template-feedback.md](docs/template-feedback.md).
 
 ## Stack
 
@@ -98,7 +109,10 @@ came to read. Load it as `<script src="app.js" defer></script>`, **not**
 force a server. `const`/`let`, no globals, cache DOM queries, and prefer a CSS
 or native-HTML solution (`<details>`, `<dialog>`, `:target`, form submission).
 
-**Language** — English for code, identifiers, file names, and documentation.
+**Language** — ~~English for code, identifiers, file names, and documentation.~~
+Entscheid RetroLos! (E4): Oberfläche, Doku, Doku- und Seiten-Dateinamen sowie
+Commit-Nachrichten auf Deutsch in Schweizer Rechtschreibung («ss», nie «ß»).
+JavaScript-Bezeichner und technische Dateinamen bleiben Englisch.
 
 ## Workflow
 
@@ -108,6 +122,9 @@ or native-HTML solution (`<details>`, `<dialog>`, `:target`, form submission).
 3. Open the page in a browser and check it against those criteria.
 4. Branch off `main`, commit, open a pull request. Commit messages: English,
    imperative, one logical change each. Do not push to `main` directly.
+   *RetroLos! (E3, E4):* Conventional Commits auf Deutsch (`feat:`, `fix:`,
+   `docs:`, `test:`, `ci:`, `chore:`); ein Branch und ein PR pro Phase, gemergt
+   als Merge-Commit.
 
 **Definition of Done**
 
@@ -148,3 +165,21 @@ revert the commit and push.
 - **Don't** rely on a server at runtime (API routes, SSR, database). Browser
   storage (`localStorage`, `IndexedDB`) works, per-device.
 - **Don't** replace a `TODO: Human clarification needed` marker with a guess.
+
+## Entscheidungen RetroLos!
+
+Abweichungen von diesem Template, festgehalten wie oben verlangt. Details und
+Begründungen: [docs/entscheidungen.md](docs/entscheidungen.md).
+
+- **Sprache** (E4): siehe «Language».
+- **Ordner** (E10): `docs/` (Doku, Beispiele) und `tests/` (Node-Tests) neben
+  `specs/`. Seiten und Assets bleiben flach im Root.
+- **Logik** (E6, E7): DOM-freie Module `core-*.js` im Root, klassisch per
+  `defer` geladen, ein globaler Namensraum `RetroLos`; in Node per `require`
+  testbar.
+- **Steckbrief** (E8): `miniapp.md` mit YAML-Frontmatter (kein `.json`).
+- **JavaScript** (E13): Inhalte, Erklärung und Navigation funktionieren ohne
+  JavaScript; die Werkzeug-Funktionen brauchen es und sagen das per
+  `<noscript>`.
+- **Sicherheit** (E12): CSP-Meta-Tag `default-src 'self'` auf jeder Seite,
+  daher keine Inline-Scripts und keine Inline-Styles.
