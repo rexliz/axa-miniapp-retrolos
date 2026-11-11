@@ -8,6 +8,13 @@
   <title>An einer Retro teilnehmen – RetroLos!</title>
   <link rel="icon" href="favicon.svg" type="image/svg+xml">
   <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="teilnehmen.css">
+  <script src="config.js" defer></script>
+  <script src="core-plan.js" defer></script>
+  <script src="core-markdown.js" defer></script>
+  <script src="ui.js" defer></script>
+  <script src="effects.js" defer></script>
+  <script src="teilnehmen.js" defer></script>
 </head>
 <body>
   <a class="skip-link" href="#inhalt">Zum Inhalt springen</a>
@@ -44,14 +51,102 @@
     </div>
   </aside>
 
-  <main id="inhalt" class="container">
-    <section class="section">
+  <main id="inhalt" class="container join">
+    <header class="page-intro">
       <h1>An einer Retro teilnehmen</h1>
-      <div class="notice">
-        <p>Hier schreibst du bald über den Einladungslink deines Scrum Masters deine Karten und speicherst sie als Datei. Diese Seite entsteht gerade (Phase 3).</p>
-      </div>
-      <p><a href="index.html">Zurück zur Startseite</a></p>
+      <p class="section-intro">Schreib deine Karten auf deinem eigenen Gerät und gib sie als Datei ab. Niemand sieht live mit – und ohne Kürzel bleibst du anonym.</p>
+    </header>
+
+    <noscript>
+      <div class="notice"><p>Zum Schreiben der Karten braucht es JavaScript. Bitte aktiviere es oder öffne den Link in einem anderen Browser.</p></div>
+    </noscript>
+
+    <section class="panel" id="no-invite" aria-labelledby="no-invite-title">
+      <h2 id="no-invite-title">So nimmst du teil</h2>
+      <div class="notice" id="invite-error" hidden><p id="invite-error-text"></p></div>
+      <ol class="how-list">
+        <li>Dein Scrum Master schickt dir einen <strong>Einladungslink</strong>, meist im Teams-Chat.</li>
+        <li>Öffne den Link. Er führt dich hierher – mit Sprint, Format und Abgabetermin.</li>
+        <li>Wähle dein Check-in-Wetter, schreib deine Karten und speichere sie als <code>.md</code>-Datei.</li>
+        <li>Lege die Datei in den Teams-Kanal oder den Team-Ordner. Fertig!</li>
+      </ol>
+      <form class="paste-form" id="paste-form" hidden>
+        <label for="paste-link">Hast du den Link kopiert? Hier einfügen:</label>
+        <div class="copy-row">
+          <input id="paste-link" type="text" placeholder="https://…/teilnehmen.html#einladung=…" autocomplete="off">
+          <button type="submit" class="button button-primary">Öffnen</button>
+        </div>
+      </form>
+      <p class="join-sm-hint">Du bist Scrum Master? <a href="planen.html">Hier planst du die Retro und erzeugst den Link.</a></p>
     </section>
+
+    <div class="join-app" id="join-app" hidden>
+      <section class="panel retro-card" aria-labelledby="retro-title">
+        <p class="retro-kicker">Einladung zur Retro</p>
+        <h2 id="retro-title">–</h2>
+        <dl class="retro-facts">
+          <div><dt>Format</dt><dd id="fact-format">–</dd></div>
+          <div><dt>Retro am</dt><dd id="fact-date">–</dd></div>
+          <div><dt>Abgabe bis</dt><dd id="fact-deadline">–</dd></div>
+        </dl>
+        <div class="notice" id="deadline-note" hidden><p>Der Abgabetermin ist vorbei. Gib deine Datei trotzdem ab, wenn die Retro noch nicht stattgefunden hat.</p></div>
+        <p class="format-explanation" id="format-explanation"></p>
+      </section>
+
+      <section class="panel join-step" aria-labelledby="checkin-title">
+        <h2 id="checkin-title"><span class="step-badge" aria-hidden="true">1</span>Check-in</h2>
+        <fieldset class="choice-group weather-group">
+          <legend>Wie war der Sprint für dich? Wähle ein Wetter.</legend>
+          <div class="weather-choices" id="weather-choices"></div>
+        </fieldset>
+      </section>
+
+      <section class="panel join-step" aria-labelledby="cards-title">
+        <h2 id="cards-title"><span class="step-badge" aria-hidden="true">2</span>Deine Karten</h2>
+        <p class="section-intro">Eine Karte = ein Gedanke. Schreib über eure Zusammenarbeit, nicht über einzelne Personen – und ohne Namen oder Nummern. <kbd>Enter</kbd> fügt die Karte hinzu, <kbd>Shift</kbd> + <kbd>Enter</kbd> macht eine neue Zeile.</p>
+        <div class="scene-host" id="scene-host" hidden></div>
+        <div class="join-columns" id="join-columns"></div>
+      </section>
+
+      <section class="panel join-step" aria-labelledby="initials-title">
+        <h2 id="initials-title"><span class="step-badge" aria-hidden="true">3</span>Kürzel <span class="optional">(freiwillig)</span></h2>
+        <div class="field">
+          <label for="initials">Dein Kürzel</label>
+          <input id="initials" type="text" maxlength="12" autocomplete="off" placeholder="leer lassen = anonym" aria-describedby="initials-hint">
+          <p class="field-hint" id="initials-hint">Auf dem Board erscheint das Kürzel nur, wenn dein Scrum Master es einschaltet. Lässt du das Feld leer, bleibt dein Beitrag anonym.</p>
+        </div>
+      </section>
+
+      <section class="panel join-step save-step" aria-labelledby="save-title">
+        <h2 id="save-title"><span class="step-badge" aria-hidden="true">4</span>Abgeben</h2>
+        <p id="save-summary" aria-live="polite">Noch keine Karten.</p>
+        <div class="button-row">
+          <button type="button" class="button button-primary button-large" id="save-button"><span aria-hidden="true">💾</span> Meine Karten als .md speichern</button>
+        </div>
+        <p class="field-hint">Vorher siehst du eine Vorschau der Datei. Dein Entwurf bleibt in diesem Browser gespeichert, bis du die Datei heruntergeladen hast.</p>
+      </section>
+
+      <section class="panel done" id="done" hidden tabindex="-1" aria-labelledby="done-title">
+        <div class="done-icon" aria-hidden="true">🙌</div>
+        <h2 id="done-title">Danke! Deine Datei ist gespeichert.</h2>
+        <p class="done-next"><strong>So geht es weiter:</strong> <span id="drop-hint"></span></p>
+        <p>Dateiname: <code id="done-filename"></code> – du findest die Datei in deinem Download-Ordner.</p>
+        <p class="field-hint">Etwas vergessen? Du kannst weiter bearbeiten und nochmals speichern. Der Dateiname bleibt gleich – lege dann einfach die neueste Version ab.</p>
+      </section>
+    </div>
+
+    <dialog class="preview-dialog" id="preview-dialog" aria-labelledby="preview-title">
+      <h2 id="preview-title">Vorschau deiner Datei</h2>
+      <p>Das gibst du weiter. Prüfe kurz: keine Namen, keine Kunden- oder Personendaten.</p>
+      <p class="preview-filename">Dateiname: <code id="preview-filename"></code></p>
+      <pre class="preview-text" id="preview-text" tabindex="0"></pre>
+      <div class="button-row">
+        <button type="button" class="button button-primary" id="preview-save">Datei speichern</button>
+        <button type="button" class="button button-ghost" id="preview-cancel">Zurück zum Bearbeiten</button>
+      </div>
+    </dialog>
+
+    <div id="status" class="toast" role="status" aria-live="polite"></div>
   </main>
 
   <footer class="site-footer">
