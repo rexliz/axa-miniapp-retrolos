@@ -30,7 +30,7 @@ jobs:
           node-version: 24
 
       - name: Tests ausführen
-        run: node --test tests/
+        run: node --test "tests/*.test.js"
 
       - name: Warn if there is no entry point
         run: |
