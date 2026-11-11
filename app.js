@@ -168,18 +168,13 @@
     }
   });
 
-  /* ---------- Logbuch ---------- */
-
-  $('save').addEventListener('click', () => {
-    ui.download(R.fileName(log), R.toMarkdown(log));
-    ui.announce('Gespeichert: ' + R.fileName(log), 'success');
-  });
+  /* ---------- Ergebnis sichern ---------- */
 
   // PDF über den Druckdialog des Browsers («Als PDF speichern») – ohne Bibliothek.
   $('pdf').addEventListener('click', () => {
     const f = R.format(log);
     $('print-title').textContent = f.emoji + ' ' + (log.title || 'Retro') + ' – ' + f.name + ' · ' + R.formatDate(log.date);
-    document.title = R.fileName(log).replace(/\.md$/, '');
+    document.title = R.fileName(log);
     ui.announce('Im Druckdialog «Als PDF speichern» wählen.');
     window.print();
     document.title = 'RetroLos! – Mini-Retro';
@@ -191,7 +186,7 @@
   });
 
   $('reset').addEventListener('click', () => {
-    if (!window.confirm('Alles löschen und neu beginnen? Speichere vorher das Logbuch, wenn du es behalten willst.')) return;
+    if (!window.confirm('Alles löschen und neu beginnen? Speichere vorher ein PDF, wenn du das Ergebnis behalten willst.')) return;
     ui.storage.clearAll();
     const keep = log.format;
     log = R.createLog();

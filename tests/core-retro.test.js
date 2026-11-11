@@ -77,17 +77,10 @@ test('Gespeicherter Stand wird geprüft – auch der ältere Segelboot-Stand', (
   assert.equal(R.normalize({ format: 'gibt-es-nicht' }).format, 'segelboot');
 });
 
-test('Markdown-Logbuch im gewählten Format', () => {
+test('Dateiname für das PDF', () => {
   const log = R.createLog('2026-11-12');
-  log.title = 'Sprint 12';
   R.setFormat(log, 'ampel');
-  R.addCard(log, 'rot', 'Meetings ohne Agenda');
-  R.addAction(log, 'Agenda-Pflicht', '2026-11-26');
-  const md = R.toMarkdown(log);
-  assert.equal(R.fileName(log), 'retro-ampel-2026-11-12.md');
-  assert.match(md, /^---\nretrolos: 3\ntyp: retro\nformat: ampel\ntitel: "Sprint 12"\ndatum: 2026-11-12\n---\n# Sprint 12 – Ampel vom 12\.11\.2026\n/);
-  assert.match(md, /## Rot – Was müssen wir stoppen\?\n- Meetings ohne Agenda\n/);
-  assert.match(md, /## Nächste Schritte\n- \[ \] Agenda-Pflicht \(bis 26\.11\.2026\)\n$/);
+  assert.equal(R.fileName(log), 'retro-ampel-2026-11-12');
 });
 
 test('Kurzfassung für Chat oder Mail', () => {

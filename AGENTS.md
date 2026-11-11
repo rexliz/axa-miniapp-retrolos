@@ -12,13 +12,13 @@ nothing between source and output.
 **Dieses Repository ist die Mini-App «RetroLos!»** (AXA-Hackathon, Plattform
 «AXALos!», Lösung 1 «Solo Workout»): eine schmale Einzelnutzer-Retro: Format wählen
 (13 Formate, Standard Segelboot), Notizen sammeln, bis zu drei nächste Schritte,
-Export als Markdown.
+Export als PDF (Druckdialog) oder Text.
 
 - **Zielgruppe:** Mitarbeitende, die allein eine Retro machen.
 - **Nicht-Ziele:** mehrere Personen, Sessions, Teilen/Links, Agenda, Server,
   Login, externe Dienste, Tracking.
-- **Daten:** keine Kunden- oder Personendaten; nur `localStorage` und die
-  selbst gespeicherte `.md`-Datei (`.gitignore`: `retro-*.md`, `retros/`).
+- **Daten:** keine Kunden- oder Personendaten; nur `localStorage` und das
+  selbst gespeicherte PDF (`.gitignore`: `retro-*.md`, `retro-*.pdf`, `retros/`).
 - Entscheide: [docs/entscheidungen.md](docs/entscheidungen.md) · Template-Lücken:
   [docs/template-feedback.md](docs/template-feedback.md).
 
