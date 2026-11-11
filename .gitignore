@@ -12,10 +12,8 @@ Thumbs.db
 # Local scratch
 *.log
 
-# Retro-Dateien (Beiträge, Protokolle) enthalten internes Team-Feedback.
+# Retro-Logbücher (retro-segelboot-*.md) enthalten internes Team-Feedback.
 # Sie gehören in den Teams-Kanal bzw. den Team-Ordner, nie ins Repository:
 # Repo und GitHub-Pages-Seite sind öffentlich.
 retro-*.md
 retros/
-# Ausnahme: klar markierte, fiktive Demo-Dateien
-!docs/beispiele/retro-*.md

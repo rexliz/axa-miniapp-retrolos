@@ -4,6 +4,8 @@ RetroLos! ist die erste echte Mini-App auf Stefans Template für statische Seite
 Diese Datei hält jede Lücke fest, sobald sie auftaucht – nicht erst am Schluss.
 Der unveränderte Template-Stand ist Commit `fdcb416`; `git diff fdcb416` zeigt alle Änderungen.
 
+> **Nachtrag (Umbau):** Nach Phase 7 wurde RetroLos! auf Wunsch des Teams zu einer schmalen Einzelnutzer-App (nur Segelboot, eine Seite) vereinfacht. Die Lücken unten bleiben gültig; Verweise auf entfernte Dateien beziehen sich auf den Stand bis `52ef52a`. Neue Lücke 26 siehe Tabelle.
+
 ## Kennzahlen
 
 | Kennzahl | Wert |
@@ -59,6 +61,7 @@ Auswirkung: **blockierend** (ohne Hilfe geht es nicht weiter) · **störend** (k
 | 23 | AGENTS.md «CSS» | «No `!important`» kollidiert mit einer klassischen Falle: Jede Komponente mit eigener `display`-Regel (z. B. `.button { display: inline-flex }`) überstimmt das HTML-Attribut `hidden`. In RetroLos! war dadurch ein Knopf sichtbar, der versteckt sein sollte. | störend | Basisregel `[hidden] { display: none !important; }` als ausdrücklich erlaubte Ausnahme ins Template aufnehmen. | behoben in RetroLos! (`2d86d13`) |
 | 24 | AGENTS.md «JS» | Ohne ES-Module muss jede Seite die Script-Dateien, von denen ihre Scripts abhängen, von Hand und in der richtigen Reihenfolge einbinden. Ein fehlendes `<script>` fällt erst zur Laufzeit auf – in RetroLos! funktionierte dadurch der Protokoll-Import auf «Planen» nicht. | störend | Im Template einen kleinen statischen Seiten-Test mitliefern (Script-Reihenfolge, CSP, relative Pfade, vorhandene Dateien), z. B. `tests/pages.test.js` aus RetroLos!. | behoben in RetroLos! (`2d772c7`) |
 | 25 | README / Template allgemein | Keine Vorlage für das README einer Mini-App (Problem, Lösung, Ablauf, Datenschutz, Grenzen) und keine Demo-Vorlage. Jede Mini-App muss das selbst erfinden, obwohl Datenschutz und Grenzen für AXA zentral sind. | Schönheitsfehler | README-Gerüst für Mini-Apps mit Pflichtabschnitten «Datenschutz-Prinzip» und «Grenzen» mitliefern. | offen – Entscheid Stefan (RetroLos!-README als Vorlage nutzbar) |
+| 26 | Template allgemein | Das Template sagt nichts darüber, wie gross eine Mini-App sein darf. Ohne Leitplanke («eine Seite, eine Aufgabe, eine Person») wuchs RetroLos! zum Sprint-Tool mit vier Seiten und musste zurückgebaut werden. | störend | Abschnitt «Was ist eine Mini-App?» in AGENTS.md: eine Aufgabe, wenige Minuten Nutzung, eine Seite, Single-User, keine Sessions – Ausnahmen begründen. | offen – Entscheid Stefan |
 
 ## Übertrag ins Template
 
@@ -237,6 +240,9 @@ Für jede offene Lücke ein Issue-Text für Stefans Template-Repository. **Eröf
 
 **#22 – Definition of Done prüft zu wenig** · `störend`
 > Einziger Prüfschritt ist «im Browser öffnen, auch ohne JavaScript». Vorschlag: Checkliste um keine Konsolenfehler, keine fremden Anfragen im Netzwerk-Tab, 390 px Breite, Dark Mode und Tastaturbedienung ergänzen.
+
+**#26 – Leitplanke für die Grösse einer Mini-App fehlt** · `störend`
+> Ohne Regel wuchs RetroLos! zum Sprint-Tool und musste zurückgebaut werden. Vorschlag: Abschnitt «Was ist eine Mini-App?» (eine Aufgabe, eine Seite, Single-User, keine Sessions).
 
 **#25 – README- und Demo-Vorlage für Mini-Apps fehlt** · `schönheitsfehler`
 > Vorschlag: README-Gerüst mit Pflichtabschnitten «Datenschutz-Prinzip» und «Grenzen des Prototyps»; RetroLos! kann als Beispiel dienen.

@@ -142,7 +142,7 @@
       hint.id = field.id + '-datenschutz';
       field.setAttribute('aria-describedby', ((field.getAttribute('aria-describedby') || '') + ' ' + hint.id).trim());
     }
-    field.insertAdjacentElement('afterend', hint);
+    (field.closest('form') || field).insertAdjacentElement('afterend', hint);
     let timer = null;
     const run = () => {
       const hits = privacy.check(field.value);

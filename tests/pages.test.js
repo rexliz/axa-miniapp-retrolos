@@ -10,10 +10,7 @@ const path = require('node:path');
 const root = path.join(__dirname, '..');
 const pages = fs.readdirSync(root).filter((f) => f.endsWith('.html'));
 const MODULE_FILES = {
-  config: 'config.js',
-  plan: 'core-plan.js',
-  markdown: 'core-markdown.js',
-  board: 'core-board.js',
+  segelboot: 'core-segelboot.js',
   privacy: 'core-privacy.js',
   ui: 'ui.js',
   effects: 'effects.js',
