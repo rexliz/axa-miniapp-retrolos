@@ -126,6 +126,13 @@
 
 /* ---------- Basis ---------- */
 
+/* Das Attribut «hidden» ist eine Browser-Vorgabe (display: none), die jede
+   Komponente mit eigener display-Regel (z. B. .button) überstimmt. Ohne
+   !important bräuchte jede Komponente eine eigene [hidden]-Regel. */
+[hidden] {
+  display: none !important;
+}
+
 *,
 *::before,
 *::after {
