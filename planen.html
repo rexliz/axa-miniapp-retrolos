@@ -8,6 +8,12 @@
   <title>Retro planen – RetroLos!</title>
   <link rel="icon" href="favicon.svg" type="image/svg+xml">
   <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="planen.css">
+  <script src="config.js" defer></script>
+  <script src="core-plan.js" defer></script>
+  <script src="ui.js" defer></script>
+  <script src="effects.js" defer></script>
+  <script src="planen.js" defer></script>
 </head>
 <body>
   <a class="skip-link" href="#inhalt">Zum Inhalt springen</a>
@@ -44,14 +50,143 @@
     </div>
   </aside>
 
-  <main id="inhalt" class="container">
-    <section class="section">
+  <main id="inhalt" class="container plan">
+    <header class="page-intro">
       <h1>Retro planen</h1>
-      <div class="notice">
-        <p>Hier planst du bald deine Retro: Format-Empfehlung, Agenda, «Überrasch mich!» und Einladungslink. Diese Seite entsteht gerade (Phase 2).</p>
-      </div>
-      <p><a href="index.html">Zurück zur Startseite</a></p>
+      <p class="section-intro">In vier Schritten zu Format, Agenda und Einladung. Alles bleibt in deinem Browser, bis du es selbst kopierst.</p>
+    </header>
+
+    <noscript>
+      <div class="notice"><p>Der Planungsassistent braucht JavaScript. Die Erklärungen auf der <a href="index.html">Startseite</a> funktionieren auch ohne.</p></div>
+    </noscript>
+
+    <form id="plan-form" class="plan-grid" novalidate>
+      <section class="panel plan-step" aria-labelledby="schritt-1">
+        <h2 id="schritt-1"><span class="step-badge" aria-hidden="true">1</span>Eckdaten</h2>
+        <div class="field-grid">
+          <div class="field">
+            <label for="sprint">Sprint</label>
+            <input id="sprint" name="sprint" type="text" placeholder="z. B. Sprint 12" autocomplete="off" maxlength="60" aria-describedby="sprint-hint">
+            <p class="field-hint" id="sprint-hint">Name oder Nummer – erscheint in Einladung und Protokoll.</p>
+          </div>
+          <div class="field">
+            <label for="date">Datum der Retro</label>
+            <input id="date" name="date" type="date">
+          </div>
+          <div class="field">
+            <label for="start">Beginn <span class="optional">(optional)</span></label>
+            <input id="start" name="start" type="time" step="300" aria-describedby="start-hint">
+            <p class="field-hint" id="start-hint">Dann zeigt die Agenda Uhrzeiten.</p>
+          </div>
+          <div class="field">
+            <label for="deadline">Abgabetermin für die Karten</label>
+            <input id="deadline" name="deadline" type="datetime-local" aria-describedby="deadline-hint">
+            <p class="field-hint" id="deadline-hint">Bis wann dein Team seine Datei ablegen soll.</p>
+          </div>
+        </div>
+        <fieldset class="choice-group">
+          <legend>Verfügbare Zeit</legend>
+          <div class="choices" id="minutes-choices"></div>
+        </fieldset>
+        <fieldset class="choice-group">
+          <legend>Wie war der Sprint?</legend>
+          <div class="choices" id="mood-choices"></div>
+        </fieldset>
+        <fieldset class="choice-group">
+          <legend>Fokus <span class="optional">(optional)</span></legend>
+          <div class="choices" id="focus-choices"></div>
+        </fieldset>
+      </section>
+
+      <section class="panel plan-step" aria-labelledby="schritt-2">
+        <h2 id="schritt-2"><span class="step-badge" aria-hidden="true">2</span>Format</h2>
+        <div class="recommendation">
+          <div class="dice-stage" aria-hidden="true">
+            <svg class="dice" id="dice" viewBox="0 0 60 60" focusable="false">
+              <rect class="dice-face" x="3" y="3" width="54" height="54" rx="12"/>
+              <circle class="dice-pip" cx="17" cy="17" r="5"/>
+              <circle class="dice-pip" cx="30" cy="17" r="5"/>
+              <circle class="dice-pip" cx="43" cy="17" r="5"/>
+              <circle class="dice-pip" cx="17" cy="30" r="5"/>
+              <circle class="dice-pip" cx="30" cy="30" r="5"/>
+              <circle class="dice-pip" cx="43" cy="30" r="5"/>
+              <circle class="dice-pip" cx="17" cy="43" r="5"/>
+              <circle class="dice-pip" cx="30" cy="43" r="5"/>
+              <circle class="dice-pip" cx="43" cy="43" r="5"/>
+            </svg>
+          </div>
+          <div class="recommendation-body" aria-live="polite">
+            <p class="recommendation-label" id="format-label">Unsere Empfehlung</p>
+            <p class="recommendation-name"><span id="format-emoji" aria-hidden="true"></span> <span id="format-name">–</span></p>
+            <p class="recommendation-reason" id="format-reason">Wähle oben, wie der Sprint war – dann schlagen wir ein Format vor.</p>
+            <p class="field-hint" id="format-repeat" hidden></p>
+          </div>
+        </div>
+        <p id="format-explanation" class="format-explanation"></p>
+        <ul class="column-preview" id="format-columns" aria-label="Spalten des Formats"></ul>
+        <div class="button-row format-actions">
+          <button type="button" class="button button-primary" id="surprise"><span aria-hidden="true">🎲</span> Überrasch mich!</button>
+          <div class="format-select">
+            <label for="format-select">Oder selbst wählen</label>
+            <select id="format-select"></select>
+          </div>
+        </div>
+        <details class="library">
+          <summary>Alle Formate ansehen</summary>
+          <div class="library-grid" id="format-library"></div>
+        </details>
+      </section>
+
+      <section class="panel plan-step plan-agenda" aria-labelledby="schritt-3">
+        <h2 id="schritt-3"><span class="step-badge" aria-hidden="true">3</span>Agenda</h2>
+        <p class="print-only print-title" id="print-title"></p>
+        <div class="checkin">
+          <p class="checkin-label">Check-in-Frage</p>
+          <p class="checkin-question" id="checkin-question">–</p>
+          <button type="button" class="button button-ghost no-print" id="checkin-next">Andere Frage</button>
+        </div>
+        <div class="agenda-bar" id="agenda-bar" aria-hidden="true"></div>
+        <ol class="agenda" id="agenda"></ol>
+        <p class="agenda-sum" id="agenda-sum" aria-live="polite"></p>
+        <div class="button-row no-print">
+          <button type="button" class="button button-secondary" id="agenda-copy">Agenda kopieren</button>
+          <button type="button" class="button button-secondary" id="agenda-print">Druckansicht</button>
+          <button type="button" class="button button-ghost" id="agenda-reset">Zeiten zurücksetzen</button>
+        </div>
+      </section>
+
+      <section class="panel plan-step no-print" aria-labelledby="schritt-4">
+        <h2 id="schritt-4"><span class="step-badge" aria-hidden="true">4</span>Einladung</h2>
+        <div class="notice" id="invite-local-note" hidden>
+          <p>Du nutzt RetroLos! gerade als lokale Datei. Damit dein Team den Link öffnen kann, zeigt er auf die Live-Version im Internet.</p>
+        </div>
+        <div class="field">
+          <label for="invite-link">Einladungslink</label>
+          <div class="copy-row">
+            <input id="invite-link" type="text" readonly aria-describedby="invite-link-hint">
+            <button type="button" class="button button-primary" data-copy-target="#invite-link" data-copy-done="Einladungslink kopiert.">Link kopieren</button>
+          </div>
+          <p class="field-hint" id="invite-link-hint">Der Link enthält nur Retro-ID, Sprint, Datum, Format und Abgabetermin – keine Namen. Alles steht hinter dem «#» und wird nie an einen Server geschickt.</p>
+        </div>
+        <div class="field">
+          <label for="invite-text">Text für den Teams-Chat</label>
+          <textarea id="invite-text" rows="10" readonly></textarea>
+        </div>
+        <div class="button-row">
+          <button type="button" class="button button-primary" data-copy-target="#invite-text" data-copy-done="Einladungstext kopiert – jetzt im Teams-Chat einfügen.">Text kopieren</button>
+          <a class="button button-ghost" id="invite-open" href="teilnehmen.html" target="_blank" rel="noopener">Link selbst ausprobieren</a>
+        </div>
+        <p class="retro-id">Retro-ID: <code id="retro-id">–</code></p>
+      </section>
+    </form>
+
+    <section class="panel next-step no-print" aria-labelledby="weiter-titel">
+      <h2 id="weiter-titel">Und dann?</h2>
+      <p>Sobald die Dateien deines Teams da sind, importierst du sie und moderierst die Retro Schritt für Schritt.</p>
+      <a class="button button-primary" href="moderieren.html">Zum Import und zur Moderation</a>
     </section>
+
+    <div id="status" class="toast" role="status" aria-live="polite"></div>
   </main>
 
   <footer class="site-footer">
