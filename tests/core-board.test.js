@@ -158,3 +158,42 @@ test('Massnahmen und Feedback', () => {
   assert.deepEqual(board.feedback, { 1: 0, 2: 0, 3: 0, 4: 2, 5: 1 });
   assert.deepEqual(B.feedbackStats(board), { votes: 3, average: 4.3 });
 });
+
+test('Protokoll aus dem Board: Schreiben, Lesen, offene Massnahmen', () => {
+  const board = B.createBoard({
+    retroId: ID, format: 'segelboot', sprint: 'Sprint 12', date: '2026-11-12',
+    review: [{ what: 'Daily auf 15 Minuten', who: 'SM', due: '2026-11-05', status: 'teilweise' }, { what: 'Ohne Antwort', who: '', due: '', status: '' }],
+  });
+  B.importFiles(board, examples, config);
+  const meeting = board.cards.find((c) => c.text.startsWith('Zu viele spontane'));
+  B.vote(board, meeting.id, 4);
+  B.addAction(board, { what: 'Fokuszeit 13–16 Uhr', who: 'SM', due: '2026-11-26' });
+  B.addFeedback(board, 5);
+  B.addFeedback(board, 4);
+  const data = B.buildProtocol(board, config);
+  assert.equal(data.contributions, 4);
+  assert.deepEqual(data.topics, [{ points: 4, text: 'Zu viele spontane Meetings am Nachmittag', column: 'Anker' }]);
+  assert.equal(data.review.length, 1, 'nur beantwortete Rückblicke');
+  const parsed = md.parseProtocol(md.writeProtocol(data).text);
+  assert.equal(parsed.ok, true);
+  assert.equal(parsed.meta.retroId, ID);
+  assert.deepEqual(parsed.mood, data.mood);
+  assert.deepEqual(parsed.actions, [{ what: 'Fokuszeit 13–16 Uhr', who: 'SM', due: '2026-11-26', status: 'offen' }]);
+  assert.deepEqual(parsed.review, data.review);
+  assert.deepEqual(md.openActions(parsed).map((a) => a.what), ['Fokuszeit 13–16 Uhr']);
+});
+
+test('Zusammenfassung für den Teams-Chat', () => {
+  const board = B.createBoard({ retroId: ID, format: 'segelboot', sprint: 'Sprint 12', date: '2026-11-12' });
+  B.importFiles(board, examples, config);
+  B.vote(board, board.cards[0].id, 2);
+  B.addAction(board, { what: 'Fokuszeit', who: 'SM', due: '2026-11-26' });
+  B.addFeedback(board, 4);
+  const text = B.summaryText(board, config);
+  assert.match(text, /^🔁 Retro «Sprint 12» – Do, 12\.11\.2026 · Format: Segelboot/);
+  assert.match(text, /Stimmung: ☀️ 1 · ⛅ 2 · 🌧️ 1 · ⛈️ 0 \(4 Beiträge\)/);
+  assert.match(text, /1\. .+ \(2 Punkte\)/);
+  assert.match(text, /• Fokuszeit – SM, bis Do, 26\.11\.2026/);
+  assert.match(text, /Feedback zur Retro: Ø 4 von 5 \(1 Stimme\)/);
+  assert.doesNotMatch(text, /ß/);
+});
