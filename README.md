@@ -11,7 +11,7 @@ Mini-App für Scrum Master und Scrum-Teams: Retro planen, Karten des Teams samme
 | Phase | Inhalt | Stand |
 |---|---|---|
 | 1 | Grundgerüst, Startseite mit Banner, erster Deploy | ✅ |
-| 2 | Planen und Einladen | geplant |
+| 2 | Planen und Einladen | ✅ |
 | 3 | Teilnehmen und Dateiformat | geplant |
 | 4 | Import und Moderieren | geplant |
 | 5 | Abschliessen, Datenschutz-Wächter | geplant |
