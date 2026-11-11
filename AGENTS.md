@@ -51,7 +51,7 @@ Allowed file types: `.html`, `.css`, `.js`, `.md`, `.csv`, and images
 |---|---|
 | install / build | none — no dependencies, and the repository root is the website |
 | run | open `index.html` in a browser |
-| test | `node --test tests/` – Node ≥ 18, keine Abhängigkeiten, läuft auch im Deploy-Workflow (Entscheid RetroLos!, E24) |
+| test | `node --test "tests/*.test.js"` – Node ≥ 22, keine Abhängigkeiten, läuft auch im Deploy-Workflow (Entscheid RetroLos!, E24) |
 | lint / format | none; TODO: Human clarification needed |
 
 Opening the file directly works because pages do not depend on JavaScript, and

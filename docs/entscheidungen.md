@@ -28,4 +28,4 @@ Entscheide, die vom Template abweichen, stehen zusätzlich kurz in [AGENTS.md](.
 | E21 | 2026-11-11 | Die Empfehlung meidet das zuletzt genutzte Format (`retrolos:letztesFormat`, gesetzt beim Speichern des Protokolls), sofern die Stimmung eine Alternative hat. | Gegen «immer dasselbe langweilige Format». | Claude |
 | E22 | 2026-11-11 | Einladung im Hash als Base64url-JSON mit Kurzschlüsseln `{v, id, s, f, d, a}`, Version `v: 1`. | Kurzer Link, Umlaute und Emojis sicher; Versionsfeld für spätere Änderungen. | Claude |
 | E23 | 2026-11-11 | Druck immer mit heller Palette; die Druckansicht der Planung zeigt nur die Agenda. | Lesbar auf Papier, auch aus dem Dark Mode heraus. | Claude |
-| E24 | 2026-11-11 | Tests laufen im Workflow mit `actions/setup-node@v7` (Node 24) vor dem Upload. | Reproduzierbare Node-Version; fehlerhafter Stand wird nicht live geschaltet. | Claude |
+| E24 | 2026-11-11 | Tests laufen im Workflow mit `actions/setup-node@v7` (Node 24) vor dem Upload, Befehl `node --test "tests/*.test.js"`. | Reproduzierbare Node-Version; fehlerhafter Stand wird nicht live geschaltet. Die Glob-Form läuft ab Node 22, die Ordner-Form erst ab Node 26. | Claude |
