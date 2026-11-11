@@ -14,7 +14,7 @@ Mini-App für Scrum Master und Scrum-Teams: Retro planen, Karten des Teams samme
 | 2 | Planen und Einladen | ✅ |
 | 3 | Teilnehmen und Dateiformat ([Spezifikation](docs/dateiformat.md)) | ✅ |
 | 4 | Import und Moderieren | ✅ |
-| 5 | Abschliessen, Datenschutz-Wächter | geplant |
+| 5 | Abschliessen, Datenschutz-Wächter | ✅ |
 | 6 | Feinschliff und Doku | geplant |
 | 7 | Template-Feedback | laufend: [docs/template-feedback.md](docs/template-feedback.md) |
 
